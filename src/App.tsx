@@ -285,10 +285,11 @@ function App() {
                 style={
                   {
                     '--hero-halftone': `url(${basePath}media/halftone-navy.webp)`,
+                    '--hero-paint': `url(${basePath}media/hero-name-paint.webp)`,
                   } as CSSProperties
                 }
               >
-                <span>Michael</span>
+                <span className="masthead__given-name">Michael</span>
                 <span className="masthead__surname">Anslow</span>
               </h1>
 
