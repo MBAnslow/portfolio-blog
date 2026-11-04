@@ -4,10 +4,7 @@ import { AiPhiFeature } from './components/AiPhiFeature'
 import { Arrow } from './components/Arrow'
 import { BelongingFeature } from './components/BelongingFeature'
 import { DebugBlendMenu } from './components/DebugBlendMenu'
-import {
-  Capabilities,
-  PracticeOverview,
-} from './components/Capabilities'
+import { PracticeOverview } from './components/Capabilities'
 import { EducationFeature } from './components/EducationFeature'
 import { FunikiFeature } from './components/FunikiFeature'
 import { PoiesisFeature } from './components/PoiesisFeature'
@@ -16,6 +13,8 @@ import { Reveal } from './components/Reveal'
 import { ScrollProgressRail } from './components/ScrollProgressRail'
 import { SectionHeading } from './components/SectionHeading'
 import { TextureDebugPanel } from './components/TextureDebugPanel'
+import { HeroTitleDebugPanel } from './components/HeroTitleDebugPanel'
+import { heroSkylineRevision } from './heroSkylineRevision'
 import {
   essays,
   otherWork,
@@ -31,7 +30,6 @@ import { basePath } from './utils/basePath'
 
 const storySections = [
   { label: 'About', id: 'about' },
-  { label: 'Skills', id: 'capabilities' },
   { label: 'Projects', id: 'projects' },
   { label: 'Other work', id: 'other-work' },
   { label: 'Research', id: 'research' },
@@ -43,10 +41,11 @@ type ProjectAccordionStyle = CSSProperties & {
   '--expanded-project-panel-color': string
   '--expanded-project-title-color': string
   '--expanded-project-title-text-color': string
+  '--expanded-project-details-color': string
 }
 
 const navigation = storySections.filter(({ id }) =>
-  ['about', 'capabilities', 'projects', 'research'].includes(id),
+  ['about', 'projects', 'research'].includes(id),
 )
 
 const blogPath = `${basePath}blog/`
@@ -72,6 +71,36 @@ function App() {
   >(null)
   const [revealingProject, setRevealingProject] = useState<string | null>(null)
   const revealTimerRef = useRef<number | null>(null)
+  const [showBlendDebug, setShowBlendDebug] = useState(false)
+  const [showTextureDebug, setShowTextureDebug] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setShowBlendDebug(params.has('debug'))
+    setShowTextureDebug(params.has('texture-debug'))
+  }, [])
+
+  useEffect(() => {
+    const stage = document.querySelector<HTMLElement>('.masthead__stage')
+    if (!stage) return
+
+    const updateAnchor = () => {
+      const stageTop = stage.getBoundingClientRect().top + window.scrollY
+      stage.style.setProperty(
+        '--hero-anchor-y',
+        `${window.innerHeight / 2 - stageTop}px`,
+      )
+    }
+
+    updateAnchor()
+    const resizeObserver = new ResizeObserver(updateAnchor)
+    resizeObserver.observe(stage)
+    window.addEventListener('resize', updateAnchor)
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', updateAnchor)
+    }
+  }, [])
 
   useEffect(() => {
     const sections = storySections
@@ -169,7 +198,7 @@ function App() {
       : 'expand'
     document.documentElement.style.setProperty(
       '--active-project-accent',
-      panelColourConfigs[projectNumber]?.accentColor ?? '#17337f',
+      panelColourConfigs[projectNumber]?.detailsColor ?? '#566595',
     )
 
     const transition = document.startViewTransition(() => {
@@ -215,17 +244,14 @@ function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      {typeof window !== 'undefined' &&
-        new URLSearchParams(window.location.search).has('debug') && (
+      {showBlendDebug && (
           <DebugBlendMenu
             configs={panelColourConfigs}
             onConfigChange={updatePanelColourConfig}
           />
         )}
-      {typeof window !== 'undefined' &&
-        new URLSearchParams(window.location.search).has('texture-debug') && (
-          <TextureDebugPanel />
-        )}
+      {showTextureDebug && <TextureDebugPanel />}
+      <HeroTitleDebugPanel />
 
       <header className="site-header">
         <div className="site-header__inner">
@@ -285,24 +311,33 @@ function App() {
                 style={
                   {
                     '--hero-halftone': `url(${basePath}media/halftone-navy.webp)`,
-                    '--hero-paint': `url(${basePath}media/hero-name-paint.webp)`,
+                    '--hero-watercolour': `url(${basePath}media/hero-texture-watercolour.png)`,
+                    '--hero-splatter': `url(${basePath}media/hero-texture-splatter.png)`,
+                    '--hero-paint-burst': `url(${basePath}media/hero-texture-paint-splatter-burst.png)`,
                   } as CSSProperties
                 }
               >
                 <span className="masthead__given-name">Michael</span>
-                <span className="masthead__surname">Anslow</span>
+                <span className="masthead__surname" aria-label="Anslow">
+                  {Array.from('Anslow').map((character, index) => (
+                    <span
+                      className="hero-title__character"
+                      aria-hidden="true"
+                      key={`${character}-${index}`}
+                    >
+                      <span className="hero-title__base">{character}</span>
+                      {['blue', 'black', 'grey', 'white'].map((layer) => (
+                        <span
+                          className={`hero-title__texture hero-title__texture--${layer}`}
+                          key={layer}
+                        >
+                          {character}
+                        </span>
+                      ))}
+                      </span>
+                  ))}
+                </span>
               </h1>
-
-              <p className="masthead__intro">
-                <span>I build new </span>
-                <span>
-                  <strong>technological experiences,</strong>{' '}
-                </span>
-                <span>embedded in research and informed </span>
-                <span>
-                  by a wider <strong>societal vision.</strong>
-                </span>
-              </p>
 
               <div className="masthead__skyline" aria-hidden="true">
                 <svg
@@ -372,14 +407,28 @@ function App() {
                   </defs>
                 </svg>
                 <img
-                  src={`${basePath}media/hero-skyline-night.png`}
+                  src={`${basePath}media/hero-watercolour-skyline.png?v=${heroSkylineRevision}`}
                   alt=""
-                  width="1219"
-                  height="508"
+                  width="2172"
+                  height="724"
                 />
               </div>
             </div>
           </div>
+        </section>
+
+        <section
+          className="page-section statement-section"
+          id="intro"
+          aria-label="Introduction"
+        >
+          <Reveal>
+            <p className="statement-section__copy">
+              I build new <strong>technological experiences,</strong> embedded
+              in research and informed by a wider{' '}
+              <strong>societal vision.</strong>
+            </p>
+          </Reveal>
         </section>
 
         <section className="page-section about-section" id="about">
@@ -393,23 +442,9 @@ function App() {
           </Reveal>
         </section>
 
-        <section
-          className="page-section capabilities-section"
-          id="capabilities"
-        >
-          <SectionHeading
-            index="02"
-            title="Experience, methods & tools"
-            note="The technical and research methods I use to make ideas concrete."
-          />
-          <Reveal>
-            <Capabilities />
-          </Reveal>
-        </section>
-
         <section className="page-section work-section" id="projects">
           <SectionHeading
-            index="03"
+            index="02"
             title="Selected work"
             note="Projects that move between artificial intelligence, creative practice and collective inquiry."
           />
@@ -436,6 +471,9 @@ function App() {
                         '#333333',
                       '--expanded-project-title-text-color':
                         '#ffffff',
+                      '--expanded-project-details-color':
+                        panelColourConfigs[project.number]?.detailsColor ??
+                        '#566595',
                     } as ProjectAccordionStyle
                   }
                 >
@@ -492,7 +530,7 @@ function App() {
           id="other-work"
         >
           <SectionHeading
-            index="04"
+            index="03"
             title="Other work"
             note="Previous projects, collaborations, research threads, wider practice."
           />
@@ -543,7 +581,7 @@ function App() {
 
         <section className="page-section research-section" id="research">
           <SectionHeading
-            index="05"
+            index="04"
             title="Research"
             note="Selected publications across music AI, natural language processing, knowledge representation and data analysis."
           />

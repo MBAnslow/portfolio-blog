@@ -1,16 +1,37 @@
 import { useEffect, useState } from 'react'
+import { basePath } from '../utils/basePath'
+
+const textureFiles = {
+  ink: 'halftone-ink.webp',
+  halftone: 'halftone-navy.webp',
+  watercolour: 'hero-texture-watercolour.png',
+  splatter: 'hero-texture-splatter.png',
+  paintBurst: 'hero-texture-paint-splatter-burst.png',
+} as const
+
+type TextureName = keyof typeof textureFiles
+
+const textureLabels: Record<TextureName, string> = {
+  ink: 'Ink halftone (card default)',
+  halftone: 'Navy halftone',
+  watercolour: 'Watercolour',
+  splatter: 'Splatter',
+  paintBurst: 'Paint splatter burst',
+}
 
 type Settings = {
   fillColor: string
   strokeColor: string
   useStrokeOverride: boolean
   strokeWidth: number
+  halftoneTexture: TextureName
   halftoneSize: number
   halftoneOpacity: number
   tintHalftone: boolean
   halftoneColor: string
   highlights: boolean
   highlightColor: string
+  highlightTexture: TextureName
   highlightSize: number
   highlightOpacity: number
   highlightOffset: number
@@ -21,14 +42,16 @@ const defaults: Settings = {
   strokeColor: '#2b3f8f',
   useStrokeOverride: false,
   strokeWidth: 7,
+  halftoneTexture: 'ink',
   halftoneSize: 520,
   halftoneOpacity: 0.92,
   tintHalftone: true,
   halftoneColor: '#242429',
   highlights: true,
   highlightColor: '#ffffff',
-  highlightSize: 910,
-  highlightOpacity: 0.11,
+  highlightTexture: 'ink',
+  highlightSize: 930,
+  highlightOpacity: 0.15,
   highlightOffset: 398,
 }
 
@@ -54,6 +77,16 @@ function apply(s: Settings, touched: Set<keyof Settings>) {
   set(
     '--debug-halftone-opacity',
     touched.has('halftoneOpacity') ? `${s.halftoneOpacity}` : null,
+  )
+  const textureUrl = (texture: TextureName) =>
+    `url(${basePath}media/${textureFiles[texture]})`
+  set(
+    '--debug-halftone-texture',
+    touched.has('halftoneTexture') ? textureUrl(s.halftoneTexture) : null,
+  )
+  set(
+    '--debug-highlight-texture',
+    touched.has('highlightTexture') ? textureUrl(s.highlightTexture) : null,
   )
   set('--debug-halftone-color', s.halftoneColor)
   root.classList.toggle('debug-halftone-original', !s.tintHalftone)
@@ -81,6 +114,26 @@ export function TextureDebugPanel() {
     setS(defaults)
     setTouched(new Set())
   }
+
+  const texturePicker = (
+    key: 'halftoneTexture' | 'highlightTexture',
+    label: string,
+  ) => (
+    <label style={rowStyle}>
+      {label}{' '}
+      <select
+        value={s[key]}
+        onChange={(e) => update(key, e.target.value as TextureName)}
+        style={{ width: '100%', color: '#000' }}
+      >
+        {Object.entries(textureLabels).map(([value, text]) => (
+          <option key={value} value={value}>
+            {text}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
 
   const slider = (
     key:
@@ -160,6 +213,7 @@ export function TextureDebugPanel() {
             />
           </label>
           {slider('strokeWidth', 'Outline width (px)', 0, 16, 0.5)}
+          {texturePicker('halftoneTexture', 'Dot texture')}
           {slider('halftoneSize', 'Halftone scale (px)', 100, 1200, 10)}
           {slider('halftoneOpacity', 'Halftone opacity', 0, 1, 0.01)}
           <label style={rowStyle}>
@@ -194,6 +248,7 @@ export function TextureDebugPanel() {
               }}
             />
           </label>
+          {texturePicker('highlightTexture', 'Highlight texture')}
           {slider('highlightSize', 'Highlight scale (px)', 60, 1200, 10)}
           {slider('highlightOpacity', 'Highlight opacity', 0, 1, 0.01)}
           {slider('highlightOffset', 'Highlight offset (px)', 0, 520, 1)}

@@ -13,4 +13,21 @@ export default defineConfig({
   base,
   output: 'static',
   integrations: [react(), sitemap()],
+  server: {
+    port: 4323,
+    host: true,
+  },
+  vite: {
+    server: {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+      watch: {
+        // OneDrive does not emit reliable fs events, so Vite otherwise
+        // keeps serving stale CSS/JS until a manual restart.
+        usePolling: true,
+        interval: 150,
+      },
+    },
+  },
 })

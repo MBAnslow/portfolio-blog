@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --port 4323 --force",
     "build": "astro check && astro build",
     "import:medium": "node scripts/import-medium.mjs",
     "lint": "oxlint src scripts astro.config.mjs",
