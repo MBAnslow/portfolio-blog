@@ -4,10 +4,7 @@ import { AiPhiFeature } from './components/AiPhiFeature'
 import { Arrow } from './components/Arrow'
 import { BelongingFeature } from './components/BelongingFeature'
 import { DebugBlendMenu } from './components/DebugBlendMenu'
-import {
-  Capabilities,
-  PracticeOverview,
-} from './components/Capabilities'
+import { PracticeOverview } from './components/Capabilities'
 import { EducationFeature } from './components/EducationFeature'
 import { FunikiFeature } from './components/FunikiFeature'
 import { PoiesisFeature } from './components/PoiesisFeature'
@@ -16,6 +13,7 @@ import { Reveal } from './components/Reveal'
 import { ScrollProgressRail } from './components/ScrollProgressRail'
 import { SectionHeading } from './components/SectionHeading'
 import { TextureDebugPanel } from './components/TextureDebugPanel'
+import { HeroTitleDebugPanel } from './components/HeroTitleDebugPanel'
 import {
   essays,
   otherWork,
@@ -31,7 +29,6 @@ import { basePath } from './utils/basePath'
 
 const storySections = [
   { label: 'About', id: 'about' },
-  { label: 'Skills', id: 'capabilities' },
   { label: 'Projects', id: 'projects' },
   { label: 'Other work', id: 'other-work' },
   { label: 'Research', id: 'research' },
@@ -41,15 +38,19 @@ const storySections = [
 type ProjectAccordionStyle = CSSProperties & {
   '--project-context-transition': string
   '--expanded-project-panel-color': string
+  '--expanded-project-article-highlight': string
   '--expanded-project-title-color': string
   '--expanded-project-title-text-color': string
+  '--expanded-project-details-color': string
 }
 
 const navigation = storySections.filter(({ id }) =>
-  ['about', 'capabilities', 'projects', 'research'].includes(id),
+  ['about', 'projects', 'research'].includes(id),
 )
 
 const blogPath = `${basePath}blog/`
+const heroMarkRevision = 'badge4'
+const heroSkylineRevision = 'silhouette3'
 const projectAnchor = (title: string) =>
   title
     .normalize('NFKD')
@@ -72,6 +73,98 @@ function App() {
   >(null)
   const [revealingProject, setRevealingProject] = useState<string | null>(null)
   const revealTimerRef = useRef<number | null>(null)
+  const [showBlendDebug, setShowBlendDebug] = useState(false)
+  const [showTextureDebug, setShowTextureDebug] = useState(false)
+  const [showHeroDebug, setShowHeroDebug] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setShowBlendDebug(params.has('panel-debug'))
+    setShowTextureDebug(params.has('texture-debug'))
+    setShowHeroDebug(params.has('hero-debug'))
+    if (!params.has('hero-debug')) {
+      ;[
+        '--hero-title-size',
+        '--hero-michael-weight',
+        '--hero-title-x',
+        '--hero-title-y',
+        '--hero-image-scale',
+        '--hero-image-x',
+        '--hero-image-y',
+        '--hero-skyline-scale',
+        '--hero-skyline-x',
+        '--hero-skyline-y',
+        '--hero-lens-zoom',
+        '--hero-lens-x',
+        '--hero-lens-y',
+        '--hero-lens-blur',
+        '--hero-lens-opacity',
+        '--hero-lens-chroma',
+      ].forEach((name) => document.body.style.removeProperty(name))
+      document
+        .querySelectorAll<HTMLElement>(
+          '.hero-title__texture, .hero-title__base, .masthead__given-name',
+        )
+        .forEach((el) => el.removeAttribute('style'))
+    }
+  }, [])
+
+  useEffect(() => {
+    const stage = document.querySelector<HTMLElement>('.masthead__stage')
+    if (!stage) return
+
+    const updateAnchor = () => {
+      const stageTop = stage.getBoundingClientRect().top + window.scrollY
+      stage.style.setProperty(
+        '--hero-anchor-y',
+        `${window.innerHeight / 2 - stageTop}px`,
+      )
+    }
+
+    updateAnchor()
+    const resizeObserver = new ResizeObserver(updateAnchor)
+    resizeObserver.observe(stage)
+    window.addEventListener('resize', updateAnchor)
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const setParallax = (x: number, y: number) => {
+      stage.style.setProperty('--hero-parallax-x', `${x}`)
+      stage.style.setProperty('--hero-parallax-y', `${y}`)
+    }
+    const onMove = (event: PointerEvent) => {
+      if (reducedMotion.matches) return
+      const box = stage.getBoundingClientRect()
+      if (box.width === 0 || box.height === 0) return
+      const x = Math.max(
+        -1,
+        Math.min(1, ((event.clientX - box.left) / box.width) * 2 - 1),
+      )
+      const y = Math.max(
+        -1,
+        Math.min(1, ((event.clientY - box.top) / box.height) * 2 - 1),
+      )
+      setParallax(x, y)
+    }
+    const onLeave = (event: PointerEvent) => {
+      if (event.type === 'pointerup' && event.pointerType === 'mouse') return
+      setParallax(0, 0)
+    }
+    stage.addEventListener('pointermove', onMove)
+    stage.addEventListener('pointerdown', onMove)
+    stage.addEventListener('pointerleave', onLeave)
+    stage.addEventListener('pointercancel', onLeave)
+    stage.addEventListener('pointerup', onLeave)
+
+    return () => {
+      resizeObserver.disconnect()
+      window.removeEventListener('resize', updateAnchor)
+      stage.removeEventListener('pointermove', onMove)
+      stage.removeEventListener('pointerdown', onMove)
+      stage.removeEventListener('pointerleave', onLeave)
+      stage.removeEventListener('pointercancel', onLeave)
+      stage.removeEventListener('pointerup', onLeave)
+    }
+  }, [])
 
   useEffect(() => {
     const sections = storySections
@@ -169,7 +262,7 @@ function App() {
       : 'expand'
     document.documentElement.style.setProperty(
       '--active-project-accent',
-      panelColourConfigs[projectNumber]?.accentColor ?? '#17337f',
+      panelColourConfigs[projectNumber]?.detailsColor ?? '#566595',
     )
 
     const transition = document.startViewTransition(() => {
@@ -215,17 +308,14 @@ function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      {typeof window !== 'undefined' &&
-        new URLSearchParams(window.location.search).has('debug') && (
+      {showBlendDebug && (
           <DebugBlendMenu
             configs={panelColourConfigs}
             onConfigChange={updatePanelColourConfig}
           />
         )}
-      {typeof window !== 'undefined' &&
-        new URLSearchParams(window.location.search).has('texture-debug') && (
-          <TextureDebugPanel />
-        )}
+      {showTextureDebug && <TextureDebugPanel />}
+      {showHeroDebug && <HeroTitleDebugPanel />}
 
       <header className="site-header">
         <div className="site-header__inner">
@@ -268,6 +358,76 @@ function App() {
       <main id="main">
         <section className="masthead" id="top" aria-labelledby="hero-title">
           <div className="masthead__frame">
+            <div
+              className="masthead__stage"
+              style={
+                {
+                  '--hero-mark-mask': `url(${basePath}media/site-badge.png?v=${heroMarkRevision})`,
+                } as CSSProperties
+              }
+            >
+              <h1
+                id="hero-title"
+                style={
+                  {
+                    '--hero-halftone': `url(${basePath}media/halftone-navy.webp)`,
+                    '--hero-watercolour': `url(${basePath}media/hero-texture-watercolour.png)`,
+                    '--hero-splatter': `url(${basePath}media/hero-texture-splatter.png)`,
+                    '--hero-paint-burst': `url(${basePath}media/hero-texture-paint-splatter-burst.png)`,
+                  } as CSSProperties
+                }
+              >
+                <span className="masthead__given-name">Michael</span>
+                <span className="masthead__surname" aria-label="Anslow">
+                  {Array.from('Anslow').map((character, index) => (
+                    <span
+                      className="hero-title__character"
+                      aria-hidden="true"
+                      key={`${character}-${index}`}
+                    >
+                      <span className="hero-title__base">{character}</span>
+                      {['blue', 'black', 'grey', 'white'].map((layer) => (
+                        <span
+                          className={`hero-title__texture hero-title__texture--${layer}`}
+                          key={layer}
+                        >
+                          {character}
+                        </span>
+                      ))}
+                      </span>
+                  ))}
+                </span>
+              </h1>
+
+              <div className="masthead__skyline" aria-hidden="true">
+                <img
+                  src={`${basePath}media/hero-skyline-silhouette.png?v=${heroSkylineRevision}`}
+                  alt=""
+                  width="2170"
+                  height="725"
+                />
+              </div>
+              <div className="masthead__title-glow" aria-hidden="true" />
+              <div className="masthead__lens" aria-hidden="true">
+                <div className="masthead__lens-zoom">
+                  <img
+                    className="masthead__lens-skyline"
+                    src={`${basePath}media/hero-skyline-silhouette.png?v=${heroSkylineRevision}`}
+                    alt=""
+                    width="2170"
+                    height="725"
+                  />
+                </div>
+              </div>
+              <div className="masthead__mark" aria-hidden="true">
+                <img
+                  src={`${basePath}media/site-badge.png?v=${heroMarkRevision}`}
+                  alt=""
+                  width="1415"
+                  height="1111"
+                />
+              </div>
+            </div>
             <div className="masthead__bar">
               <p className="masthead__role">Research Engineer / Innovator</p>
               <ul className="masthead__practice" aria-label="Core practice">
@@ -278,107 +438,21 @@ function App() {
               </ul>
               <span className="masthead__place">Paris / France</span>
             </div>
-
-            <div className="masthead__stage">
-              <h1
-                id="hero-title"
-                style={
-                  {
-                    '--hero-halftone': `url(${basePath}media/halftone-navy.webp)`,
-                  } as CSSProperties
-                }
-              >
-                <span>Michael</span>
-                <span className="masthead__surname">Anslow</span>
-              </h1>
-
-              <p className="masthead__intro">
-                <span>I build new </span>
-                <span>
-                  <strong>technological experiences,</strong>{' '}
-                </span>
-                <span>embedded in research and informed </span>
-                <span>
-                  by a wider <strong>societal vision.</strong>
-                </span>
-              </p>
-
-              <div className="masthead__skyline" aria-hidden="true">
-                <svg
-                  className="masthead__defs"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <defs>
-                    <filter
-                      id="hero-title-grain"
-                      x="0%"
-                      y="0%"
-                      width="100%"
-                      height="100%"
-                      colorInterpolationFilters="sRGB"
-                    >
-                      <feTurbulence
-                        type="fractalNoise"
-                        baseFrequency="0.004 0.006"
-                        numOctaves="2"
-                        seed="41"
-                        result="coarseNoise"
-                      />
-                      <feTurbulence
-                        type="fractalNoise"
-                        baseFrequency="0.11"
-                        numOctaves="4"
-                        seed="78"
-                        result="fineNoise"
-                      />
-                      <feBlend
-                        in="coarseNoise"
-                        in2="fineNoise"
-                        mode="soft-light"
-                        result="variedNoise"
-                      />
-                      <feColorMatrix
-                        in="variedNoise"
-                        type="saturate"
-                        values="0"
-                        result="monochromeNoise"
-                      />
-                      <feComponentTransfer in="monochromeNoise" result="grain">
-                        <feFuncR type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncG type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncB type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncA type="linear" slope="0.035" />
-                      </feComponentTransfer>
-                      <feComposite
-                        in="grain"
-                        in2="SourceGraphic"
-                        operator="in"
-                        result="clippedGrain"
-                      />
-                      <feBlend
-                        in="SourceGraphic"
-                        in2="clippedGrain"
-                        mode="soft-light"
-                        result="textured"
-                      />
-                      <feComposite
-                        in="textured"
-                        in2="SourceGraphic"
-                        operator="in"
-                      />
-                    </filter>
-                  </defs>
-                </svg>
-                <img
-                  src={`${basePath}media/hero-skyline-night.png`}
-                  alt=""
-                  width="1219"
-                  height="508"
-                />
-              </div>
-            </div>
           </div>
+        </section>
+
+        <section
+          className="page-section statement-section"
+          id="intro"
+          aria-label="Introduction"
+        >
+          <Reveal>
+            <p className="statement-section__copy">
+              I build new <strong>technological experiences,</strong> embedded
+              in research and informed by a wider{' '}
+              <strong>societal vision.</strong>
+            </p>
+          </Reveal>
         </section>
 
         <section className="page-section about-section" id="about">
@@ -392,23 +466,9 @@ function App() {
           </Reveal>
         </section>
 
-        <section
-          className="page-section capabilities-section"
-          id="capabilities"
-        >
-          <SectionHeading
-            index="02"
-            title="Experience, methods & tools"
-            note="The technical and research methods I use to make ideas concrete."
-          />
-          <Reveal>
-            <Capabilities />
-          </Reveal>
-        </section>
-
         <section className="page-section work-section" id="projects">
           <SectionHeading
-            index="03"
+            index="02"
             title="Selected work"
             note="Projects that move between artificial intelligence, creative practice and collective inquiry."
           />
@@ -430,11 +490,19 @@ function App() {
                       '--expanded-project-panel-color':
                         panelColourConfigs[project.number]?.panelColor ??
                         '#ffffff',
+                      '--expanded-project-article-highlight':
+                        panelColourConfigs[project.number]
+                          ?.articleHighlightColor ??
+                        panelColourConfigs[project.number]?.panelColor ??
+                        '#ffffff',
                       '--expanded-project-title-color':
-                        panelColourConfigs[project.number]?.accentColor ??
+                        panelColourConfigs[project.number]?.titleOutlineColor ??
                         '#333333',
                       '--expanded-project-title-text-color':
                         '#ffffff',
+                      '--expanded-project-details-color':
+                        panelColourConfigs[project.number]?.detailsColor ??
+                        '#566595',
                     } as ProjectAccordionStyle
                   }
                 >
@@ -491,7 +559,7 @@ function App() {
           id="other-work"
         >
           <SectionHeading
-            index="04"
+            index="03"
             title="Other work"
             note="Previous projects, collaborations, research threads, wider practice."
           />
@@ -542,7 +610,7 @@ function App() {
 
         <section className="page-section research-section" id="research">
           <SectionHeading
-            index="05"
+            index="04"
             title="Research"
             note="Selected publications across music AI, natural language processing, knowledge representation and data analysis."
           />

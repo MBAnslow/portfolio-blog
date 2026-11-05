@@ -1,77 +1,4 @@
-import methodsAndToolsMarkdown from '../content/methods-and-tools.md?raw'
-
 type ToolkitTone = 'paper' | 'yellow' | 'blue' | 'red'
-
-type ToolkitGroup = {
-  category: string
-  descriptor: string
-  tools: string[]
-  tone: ToolkitTone
-}
-
-type ToolkitContent = {
-  title: string
-  intro: string
-  groups: ToolkitGroup[]
-}
-
-const toolkitTones: ToolkitTone[] = [
-  'blue',
-  'yellow',
-  'red',
-  'yellow',
-  'blue',
-  'red',
-]
-
-function parseToolkit(markdown: string): ToolkitContent {
-  const content: ToolkitContent = {
-    title: 'Methods & tools',
-    intro: '',
-    groups: [],
-  }
-  let currentGroup: ToolkitGroup | undefined
-
-  for (const sourceLine of markdown.split('\n')) {
-    const line = sourceLine.trim()
-    if (!line) continue
-
-    if (line.startsWith('# ')) {
-      content.title = line.slice(2).trim()
-      continue
-    }
-
-    if (line.startsWith('> ')) {
-      content.intro = `${content.intro} ${line.slice(2)}`.trim()
-      continue
-    }
-
-    if (line.startsWith('## ')) {
-      currentGroup = {
-        category: line.slice(3).trim(),
-        descriptor: '',
-        tools: [],
-        tone: toolkitTones[content.groups.length % toolkitTones.length],
-      }
-      content.groups.push(currentGroup)
-      continue
-    }
-
-    if (line.startsWith('- ') && currentGroup) {
-      currentGroup.tools.push(line.slice(2).trim())
-      continue
-    }
-
-    if (currentGroup) {
-      currentGroup.descriptor =
-        `${currentGroup.descriptor} ${line}`.trim()
-    }
-  }
-
-  return content
-}
-
-const toolkit = parseToolkit(methodsAndToolsMarkdown)
 
 const innovationStages: {
   stage: string
@@ -146,8 +73,10 @@ export function PracticeOverview() {
               key={stage.stage}
             >
               <div className="practice-journey__arrow">
-                <span>{sequenceNumber(index)}</span>
-                <span>{stage.stage}</span>
+                <div className="practice-journey__arrow-face">
+                  <span>{sequenceNumber(index)}</span>
+                  <span>{stage.stage}</span>
+                </div>
               </div>
               <p className="practice-journey__outcome">{stage.outcome}</p>
               <ul className="practice-journey__activities">
@@ -158,37 +87,6 @@ export function PracticeOverview() {
             </li>
           ))}
         </ol>
-      </div>
-    </div>
-  )
-}
-
-export function Capabilities() {
-  return (
-    <div className="toolkit-board">
-      <p className="section-label">{toolkit.intro}</p>
-      <div className="toolkit-board__grid">
-        {toolkit.groups.map((group, index) => (
-          <section
-            className={`toolkit-card tone--${group.tone}`}
-            key={group.category}
-          >
-            <div className="toolkit-card__head">
-              <span aria-hidden="true">{sequenceNumber(index)}</span>
-              <h4>{group.category}</h4>
-            </div>
-            <div className="toolkit-card__body">
-              {group.descriptor && (
-                <p className="toolkit-card__descriptor">{group.descriptor}</p>
-              )}
-              <ul className="toolkit-card__tools">
-                {group.tools.map((tool) => (
-                  <li key={tool}>{tool}</li>
-                ))}
-              </ul>
-            </div>
-          </section>
-        ))}
       </div>
     </div>
   )

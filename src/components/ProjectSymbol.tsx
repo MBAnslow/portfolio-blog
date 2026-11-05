@@ -161,7 +161,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
           height="10"
           patternUnits="userSpaceOnUse"
           patternTransform={`rotate(${gradientAngle % 70 - 35})`}
-          color="var(--panel-accent-color)"
+          color="var(--panel-pattern-crayon-color, var(--panel-pattern-color))"
         >
           <path
             d="M -3 0.8 C 2 0 5 1.8 10 0.65 S 17 1.4 21 0.3"
@@ -224,7 +224,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
           width={textureIndex === 3 ? 6 : 10}
           height={textureIndex === 3 ? 6 : 10}
           patternUnits="userSpaceOnUse"
-          color="var(--panel-accent-color)"
+          color="var(--panel-pattern-texture-color, var(--panel-pattern-color))"
         >
           {textureIndex === 0 && (
             <path
@@ -386,7 +386,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
             y="-100"
             width="300"
             height="300"
-            fill="var(--panel-accent-color)"
+            fill="var(--panel-pattern-color)"
             filter={`url(#${gritId})`}
           />
         </g>
@@ -411,7 +411,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
         <path
           className="project-symbol__pencil-outline"
           d={blob.outlineD}
-          fill="var(--blue-dark)"
+          fill="var(--panel-pattern-pencil-color, var(--blue-dark))"
           fillOpacity="0.2"
           fillRule="evenodd"
           stroke="none"
@@ -421,7 +421,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
       <path
         className="project-symbol__backdrop-fill"
         d={geometry.backdropD}
-        fill="var(--panel-accent-color)"
+        fill="var(--panel-pattern-backdrop-color, var(--panel-pattern-color))"
         stroke="none"
       />
       <g clipPath={`url(#${backdropClipId})`}>
@@ -431,7 +431,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
           y="-100"
           width="300"
           height="300"
-          fill="var(--panel-accent-color)"
+          fill="var(--panel-pattern-grain-color, var(--panel-pattern-color))"
           filter={`url(#${backdropGrainId})`}
         />
         <rect
@@ -448,7 +448,7 @@ export function ProjectSymbol({ title }: ProjectSymbolProps) {
         className="project-symbol__backdrop"
         d={geometry.backdropD}
         fill={`url(#${textureId})`}
-        stroke="var(--panel-accent-color)"
+        stroke="var(--panel-pattern-stroke-color, var(--panel-pattern-color))"
         strokeOpacity="0.96"
         strokeWidth="3"
         vectorEffect="non-scaling-stroke"
