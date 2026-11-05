@@ -8,6 +8,7 @@ type DebugBlendMenuProps = {
 
 const colourFields = [
   { key: 'panelColor', label: 'Panel' },
+  { key: 'articleHighlightColor', label: 'Article highlight' },
   { key: 'titleOutlineColor', label: 'Title outline' },
   { key: 'patternColor', label: 'Pattern' },
   { key: 'patternTextureColor', label: 'Texture' },

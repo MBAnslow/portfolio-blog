@@ -1,5 +1,6 @@
 export type PanelColourConfig = {
   panelColor: string
+  articleHighlightColor: string
   titleOutlineColor: string
   patternColor: string
   patternTextureColor: string
@@ -25,6 +26,7 @@ export const defaultPanelColourConfigs: Record<
 > = {
   '01': {
     panelColor: '#edf7f8',
+    articleHighlightColor: '#edf7f8',
     titleOutlineColor: '#1c3273',
     patternColor: '#1c3273',
     patternTextureColor: '#1b2c5f',
@@ -45,6 +47,7 @@ export const defaultPanelColourConfigs: Record<
   },
   '02': {
     panelColor: '#ffebeb',
+    articleHighlightColor: '#ffebeb',
     titleOutlineColor: '#98392f',
     patternColor: '#98392f',
     patternTextureColor: '#7e3229',
@@ -65,6 +68,7 @@ export const defaultPanelColourConfigs: Record<
   },
   '03': {
     panelColor: '#fbf2da',
+    articleHighlightColor: '#fbf2da',
     titleOutlineColor: '#97741c',
     patternColor: '#97741c',
     patternTextureColor: '#7d6119',
@@ -85,6 +89,7 @@ export const defaultPanelColourConfigs: Record<
   },
   '04': {
     panelColor: '#fde591',
+    articleHighlightColor: '#e2d3bb',
     titleOutlineColor: '#ffffff',
     patternColor: '#ffffff',
     patternTextureColor: '#7e553e',
@@ -105,6 +110,7 @@ export const defaultPanelColourConfigs: Record<
   },
   '05': {
     panelColor: '#eaf3f6',
+    articleHighlightColor: '#eaf3f6',
     titleOutlineColor: '#3b7b97',
     patternColor: '#518ea9',
     patternTextureColor: '#316072',

@@ -38,6 +38,7 @@ const storySections = [
 type ProjectAccordionStyle = CSSProperties & {
   '--project-context-transition': string
   '--expanded-project-panel-color': string
+  '--expanded-project-article-highlight': string
   '--expanded-project-title-color': string
   '--expanded-project-title-text-color': string
   '--expanded-project-details-color': string
@@ -406,6 +407,7 @@ function App() {
                   height="725"
                 />
               </div>
+              <div className="masthead__title-glow" aria-hidden="true" />
               <div className="masthead__lens" aria-hidden="true">
                 <div className="masthead__lens-zoom">
                   <img
@@ -486,6 +488,11 @@ function App() {
                           ? `project-context-${project.number}`
                           : 'none',
                       '--expanded-project-panel-color':
+                        panelColourConfigs[project.number]?.panelColor ??
+                        '#ffffff',
+                      '--expanded-project-article-highlight':
+                        panelColourConfigs[project.number]
+                          ?.articleHighlightColor ??
                         panelColourConfigs[project.number]?.panelColor ??
                         '#ffffff',
                       '--expanded-project-title-color':
