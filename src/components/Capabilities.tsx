@@ -73,8 +73,10 @@ export function PracticeOverview() {
               key={stage.stage}
             >
               <div className="practice-journey__arrow">
-                <span>{sequenceNumber(index)}</span>
-                <span>{stage.stage}</span>
+                <div className="practice-journey__arrow-face">
+                  <span>{sequenceNumber(index)}</span>
+                  <span>{stage.stage}</span>
+                </div>
               </div>
               <p className="practice-journey__outcome">{stage.outcome}</p>
               <ul className="practice-journey__activities">

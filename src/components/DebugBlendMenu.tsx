@@ -8,7 +8,15 @@ type DebugBlendMenuProps = {
 
 const colourFields = [
   { key: 'panelColor', label: 'Panel' },
-  { key: 'accentColor', label: 'Panel accent' },
+  { key: 'titleOutlineColor', label: 'Title outline' },
+  { key: 'patternColor', label: 'Pattern' },
+  { key: 'patternTextureColor', label: 'Texture' },
+  { key: 'patternBackdropColor', label: 'Backdrop' },
+  { key: 'patternGrainColor', label: 'Grain' },
+  { key: 'patternStrokeColor', label: 'Stroke' },
+  { key: 'patternCrayonColor', label: 'Crayon' },
+  { key: 'patternWashColor', label: 'Wash' },
+  { key: 'patternPencilColor', label: 'Pencil' },
   { key: 'detailsColor', label: 'Role & skills' },
   { key: 'descriptionBackgroundColor', label: 'Description' },
   { key: 'descriptionBorderColor', label: 'Border' },

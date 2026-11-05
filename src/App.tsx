@@ -74,11 +74,38 @@ function App() {
   const revealTimerRef = useRef<number | null>(null)
   const [showBlendDebug, setShowBlendDebug] = useState(false)
   const [showTextureDebug, setShowTextureDebug] = useState(false)
+  const [showHeroDebug, setShowHeroDebug] = useState(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    setShowBlendDebug(params.has('debug'))
+    setShowBlendDebug(params.has('panel-debug'))
     setShowTextureDebug(params.has('texture-debug'))
+    setShowHeroDebug(params.has('hero-debug'))
+    if (!params.has('hero-debug')) {
+      ;[
+        '--hero-title-size',
+        '--hero-michael-weight',
+        '--hero-title-x',
+        '--hero-title-y',
+        '--hero-image-scale',
+        '--hero-image-x',
+        '--hero-image-y',
+        '--hero-skyline-scale',
+        '--hero-skyline-x',
+        '--hero-skyline-y',
+        '--hero-lens-zoom',
+        '--hero-lens-x',
+        '--hero-lens-y',
+        '--hero-lens-blur',
+        '--hero-lens-opacity',
+        '--hero-lens-chroma',
+      ].forEach((name) => document.body.style.removeProperty(name))
+      document
+        .querySelectorAll<HTMLElement>(
+          '.hero-title__texture, .hero-title__base, .masthead__given-name',
+        )
+        .forEach((el) => el.removeAttribute('style'))
+    }
   }, [])
 
   useEffect(() => {
@@ -106,19 +133,35 @@ function App() {
     const onMove = (event: PointerEvent) => {
       if (reducedMotion.matches) return
       const box = stage.getBoundingClientRect()
-      const x = ((event.clientX - box.left) / box.width) * 2 - 1
-      const y = ((event.clientY - box.top) / box.height) * 2 - 1
+      if (box.width === 0 || box.height === 0) return
+      const x = Math.max(
+        -1,
+        Math.min(1, ((event.clientX - box.left) / box.width) * 2 - 1),
+      )
+      const y = Math.max(
+        -1,
+        Math.min(1, ((event.clientY - box.top) / box.height) * 2 - 1),
+      )
       setParallax(x, y)
     }
-    const onLeave = () => setParallax(0, 0)
+    const onLeave = (event: PointerEvent) => {
+      if (event.type === 'pointerup' && event.pointerType === 'mouse') return
+      setParallax(0, 0)
+    }
     stage.addEventListener('pointermove', onMove)
+    stage.addEventListener('pointerdown', onMove)
     stage.addEventListener('pointerleave', onLeave)
+    stage.addEventListener('pointercancel', onLeave)
+    stage.addEventListener('pointerup', onLeave)
 
     return () => {
       resizeObserver.disconnect()
       window.removeEventListener('resize', updateAnchor)
       stage.removeEventListener('pointermove', onMove)
+      stage.removeEventListener('pointerdown', onMove)
       stage.removeEventListener('pointerleave', onLeave)
+      stage.removeEventListener('pointercancel', onLeave)
+      stage.removeEventListener('pointerup', onLeave)
     }
   }, [])
 
@@ -271,7 +314,7 @@ function App() {
           />
         )}
       {showTextureDebug && <TextureDebugPanel />}
-      <HeroTitleDebugPanel />
+      {showHeroDebug && <HeroTitleDebugPanel />}
 
       <header className="site-header">
         <div className="site-header__inner">
@@ -314,17 +357,6 @@ function App() {
       <main id="main">
         <section className="masthead" id="top" aria-labelledby="hero-title">
           <div className="masthead__frame">
-            <div className="masthead__bar">
-              <p className="masthead__role">Research Engineer / Innovator</p>
-              <ul className="masthead__practice" aria-label="Core practice">
-                <li>AI</li>
-                <li>Interactive systems</li>
-                <li>Creative technology</li>
-                <li>Research</li>
-              </ul>
-              <span className="masthead__place">Paris / France</span>
-            </div>
-
             <div
               className="masthead__stage"
               style={
@@ -394,6 +426,16 @@ function App() {
                 />
               </div>
             </div>
+            <div className="masthead__bar">
+              <p className="masthead__role">Research Engineer / Innovator</p>
+              <ul className="masthead__practice" aria-label="Core practice">
+                <li>AI</li>
+                <li>Interactive systems</li>
+                <li>Creative technology</li>
+                <li>Research</li>
+              </ul>
+              <span className="masthead__place">Paris / France</span>
+            </div>
           </div>
         </section>
 
@@ -447,7 +489,7 @@ function App() {
                         panelColourConfigs[project.number]?.panelColor ??
                         '#ffffff',
                       '--expanded-project-title-color':
-                        panelColourConfigs[project.number]?.accentColor ??
+                        panelColourConfigs[project.number]?.titleOutlineColor ??
                         '#333333',
                       '--expanded-project-title-text-color':
                         '#ffffff',

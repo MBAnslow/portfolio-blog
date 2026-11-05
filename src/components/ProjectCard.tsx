@@ -29,7 +29,15 @@ type TiltProperties = CSSProperties & {
   '--description-overlap-text-color'?: string
   '--description-overlap-text-outline-color'?: string
   '--project-panel-color'?: string
-  '--panel-accent-color'?: string
+  '--panel-title-outline-color'?: string
+  '--panel-pattern-color'?: string
+  '--panel-pattern-texture-color'?: string
+  '--panel-pattern-backdrop-color'?: string
+  '--panel-pattern-grain-color'?: string
+  '--panel-pattern-stroke-color'?: string
+  '--panel-pattern-crayon-color'?: string
+  '--panel-pattern-wash-color'?: string
+  '--panel-pattern-pencil-color'?: string
   '--panel-details-color'?: string
 }
 
@@ -83,6 +91,7 @@ export function ProjectCard({
     let fittedBodyHeight = -1
     let fittedTitleWidth = -1
     let fittedTitleHeight = -1
+    let lastBodyWidth = -1
 
     const fitTitle = () => {
       const bodyRect = body.getBoundingClientRect()
@@ -91,7 +100,6 @@ export function ProjectCard({
 
       if (
         Math.abs(bodyRect.width - fittedBodyWidth) < 0.5 &&
-        Math.abs(bodyRect.height - fittedBodyHeight) < 0.5 &&
         Math.abs(titleWidth - fittedTitleWidth) < 0.5 &&
         Math.abs(titleHeight - fittedTitleHeight) < 0.5
       ) {
@@ -202,11 +210,26 @@ export function ProjectCard({
     }
 
     const updateOverlap = () => {
-      if (window.innerWidth >= 901) {
+      const currentBodyWidth = body.getBoundingClientRect().width
+      const compact = window.innerWidth < 901
+
+      if (Math.abs(currentBodyWidth - lastBodyWidth) >= 0.5) {
+        lastBodyWidth = currentBodyWidth
+        title.style.removeProperty('height')
+        title.style.removeProperty('font-size')
         body.style.removeProperty('min-height')
+        fittedBodyWidth = -1
+        fittedBodyHeight = -1
+        fittedTitleWidth = -1
+        fittedTitleHeight = -1
       }
 
       fitTitle()
+
+      if (!compact) {
+        title.style.height = `${title.offsetHeight}px`
+      }
+
       fitDescription()
 
       const titleLetters = title.querySelectorAll<HTMLElement>(
@@ -326,12 +349,12 @@ export function ProjectCard({
       body.style.removeProperty('--description-font-size')
 
       const descriptionRect = description.getBoundingClientRect()
+      const footerGap = compact ? 16 : 48
+      const overflow =
+        descriptionRect.bottom + footerGap - body.getBoundingClientRect().bottom
 
-      if (window.innerWidth < 901) {
-        const compactBodyHeight = Math.ceil(
-          descriptionRect.bottom - bodyRect.top + 16,
-        )
-        body.style.minHeight = `${compactBodyHeight}px`
+      if (overflow > 1) {
+        body.style.minHeight = `${Math.ceil(body.clientHeight + overflow)}px`
       }
 
       const maskWidth = Math.max(1, Math.ceil(descriptionRect.width))
@@ -451,7 +474,15 @@ export function ProjectCard({
     '--description-overlap-text-outline-color':
       colourConfig.overlapTextOutlineColor,
     '--project-panel-color': colourConfig.panelColor,
-    '--panel-accent-color': colourConfig.accentColor,
+    '--panel-title-outline-color': colourConfig.titleOutlineColor,
+    '--panel-pattern-color': colourConfig.patternColor,
+    '--panel-pattern-texture-color': colourConfig.patternTextureColor,
+    '--panel-pattern-backdrop-color': colourConfig.patternBackdropColor,
+    '--panel-pattern-grain-color': colourConfig.patternGrainColor,
+    '--panel-pattern-stroke-color': colourConfig.patternStrokeColor,
+    '--panel-pattern-crayon-color': colourConfig.patternCrayonColor,
+    '--panel-pattern-wash-color': colourConfig.patternWashColor,
+    '--panel-pattern-pencil-color': colourConfig.patternPencilColor,
     '--panel-details-color': colourConfig.detailsColor,
     backgroundColor: colourConfig.panelColor,
     backgroundImage: 'none',
