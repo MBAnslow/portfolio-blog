@@ -40,40 +40,58 @@ type HeroLayoutSettings = {
   imageScale: number
   imageX: number
   imageY: number
+  skylineScale: number
+  skylineX: number
+  skylineY: number
+  lensZoom: number
+  lensX: number
+  lensY: number
+  lensBlur: number
+  lensOpacity: number
+  lensChroma: number
 }
 
 const defaultHeroSettings: HeroTextureSettings = {
-  fillColor: '#080808',
-  blueTexture: 'halftone',
-  blueColor: '#413f60',
-  blueSize: 730,
-  blueOffset: 95,
-  blueOpacity: 0.71,
+  fillColor: '#1e0806',
+  blueTexture: 'watercolour',
+  blueColor: '#ff5542',
+  blueSize: 1400,
+  blueOffset: 320,
+  blueOpacity: 0.76,
   blackTexture: 'watercolour',
-  blackColor: '#317faf',
-  blackSize: 1210,
+  blackColor: '#8331af',
+  blackSize: 1200,
   blackOffset: 308,
-  blackOpacity: 0.72,
+  blackOpacity: 0.22,
   greyTexture: 'watercolour',
-  greyColor: '#f29f40',
+  greyColor: '#fff700',
   greySize: 770,
-  greyOffset: 219,
-  greyOpacity: 0.53,
+  greyOffset: 210,
+  greyOpacity: 0.28,
   whiteTexture: 'paintBurst',
-  whiteColor: '#9469c9',
-  whiteSize: 390,
-  whiteOffset: 370,
-  whiteOpacity: 0.67,
+  whiteColor: '#ff9214',
+  whiteSize: 410,
+  whiteOffset: 341,
+  whiteOpacity: 0.76,
 }
 
 const defaultLayoutSettings: HeroLayoutSettings = {
-  titleSize: 180,
-  michaelWeight: 260,
-  titleX: -83,
-  titleY: -205,
-  imageScale: 1.61,
-  imageX: 81,
-  imageY: 37,
+  titleSize: 139,
+  michaelWeight: 280,
+  titleX: -59,
+  titleY: -142,
+  imageScale: 0.99,
+  imageX: 71,
+  imageY: 79,
+  skylineScale: 1.61,
+  skylineX: 89,
+  skylineY: 92,
+  lensZoom: 1.04,
+  lensX: -1,
+  lensY: -1,
+  lensBlur: 0,
+  lensOpacity: 0.93,
+  lensChroma: 28,
 }
 
 function textureUrl(texture: TextureName) {
@@ -156,6 +174,15 @@ function applyLayoutToDOM(s: HeroLayoutSettings) {
   root.style.setProperty('--hero-image-scale', `${s.imageScale}`)
   root.style.setProperty('--hero-image-x', `${s.imageX}px`)
   root.style.setProperty('--hero-image-y', `${s.imageY}px`)
+  root.style.setProperty('--hero-skyline-scale', `${s.skylineScale}`)
+  root.style.setProperty('--hero-skyline-x', `${s.skylineX}px`)
+  root.style.setProperty('--hero-skyline-y', `${s.skylineY}px`)
+  root.style.setProperty('--hero-lens-zoom', `${s.lensZoom}`)
+  root.style.setProperty('--hero-lens-x', `${s.lensX}px`)
+  root.style.setProperty('--hero-lens-y', `${s.lensY}px`)
+  root.style.setProperty('--hero-lens-blur', `${s.lensBlur}px`)
+  root.style.setProperty('--hero-lens-opacity', `${s.lensOpacity}`)
+  root.style.setProperty('--hero-lens-chroma', `${s.lensChroma}`)
   document.querySelectorAll<HTMLElement>('.masthead__given-name').forEach((el) => {
     el.style.setProperty('font-weight', `${s.michaelWeight}`, 'important')
     el.style.setProperty(
@@ -344,21 +371,58 @@ export function HeroTitleDebugPanel() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(5, minmax(0, 1fr))',
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
             gap: 8,
           }}
         >
-          <div style={{ minWidth: 0, padding: 8, background: '#1a1a1a', borderRadius: 6 }}>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>Layout</div>
-            {([
-              ['titleSize', 'Title size', layout.titleSize, 70, 280, 1],
-              ['titleX', 'Title X', layout.titleX, -700, 700, 1],
-              ['titleY', 'Title Y', layout.titleY, -500, 500, 1],
-              ['imageScale', 'Image scale', layout.imageScale, 0.4, 3, 0.01],
-              ['imageX', 'Image X', layout.imageX, -900, 900, 1],
-              ['imageY', 'Image Y', layout.imageY, -700, 700, 1],
-            ] as [keyof HeroLayoutSettings, string, number, number, number, number][]).map(
-              ([key, label, value, min, max, step]) => (
+          {(
+            [
+              [
+                'Title',
+                [
+                  ['titleSize', 'Size', layout.titleSize, 70, 280, 1],
+                  ['titleX', 'X', layout.titleX, -700, 700, 1],
+                  ['titleY', 'Y', layout.titleY, -500, 500, 1],
+                ],
+              ],
+              [
+                'Hex mark',
+                [
+                  ['imageScale', 'Size', layout.imageScale, 0.4, 3, 0.01],
+                  ['imageX', 'X', layout.imageX, -900, 900, 1],
+                  ['imageY', 'Y', layout.imageY, -700, 700, 1],
+                ],
+              ],
+              [
+                'Skyline',
+                [
+                  ['skylineScale', 'Size', layout.skylineScale, 0.25, 2.4, 0.01],
+                  ['skylineX', 'X', layout.skylineX, -900, 900, 1],
+                  ['skylineY', 'Y', layout.skylineY, -700, 700, 1],
+                ],
+              ],
+              [
+                'Lens',
+                [
+                  ['lensZoom', 'Zoom', layout.lensZoom, 1, 1.8, 0.01],
+                  ['lensX', 'X', layout.lensX, -400, 400, 1],
+                  ['lensY', 'Y', layout.lensY, -400, 400, 1],
+                  ['lensBlur', 'Blur', layout.lensBlur, 0, 8, 0.1],
+                  ['lensOpacity', 'Opacity', layout.lensOpacity, 0, 1, 0.01],
+                  ['lensChroma', 'Chroma', layout.lensChroma, 0, 48, 0.5],
+                ],
+              ],
+            ] as [
+              string,
+              [keyof HeroLayoutSettings, string, number, number, number, number][],
+            ][]
+          ).map(([title, sliders]) => (
+            <div
+              key={title}
+              style={{ minWidth: 0, padding: 8, background: '#1a1a1a', borderRadius: 6 }}
+            >
+              <div style={{ fontWeight: 700, marginBottom: 4 }}>{title}</div>
+              {sliders.map(([key, label, value, min, max, step]) => (
                 <label key={key} style={{ display: 'block', marginTop: 4 }}>
                   {label}: <strong>{value}</strong>
                   <input
@@ -367,14 +431,18 @@ export function HeroTitleDebugPanel() {
                     max={max}
                     step={step}
                     value={value}
-                    onInput={(event) => updateLayout(key, Number(event.currentTarget.value))}
-                    onChange={(event) => updateLayout(key, Number(event.target.value))}
+                    onInput={(event) =>
+                      updateLayout(key, Number(event.currentTarget.value))
+                    }
+                    onChange={(event) =>
+                      updateLayout(key, Number(event.target.value))
+                    }
                     style={{ width: '100%' }}
                   />
                 </label>
-              ),
-            )}
-          </div>
+              ))}
+            </div>
+          ))}
           {layers.map(layer => (
             <LayerSection key={layer.label} {...layer} onUpdate={update} />
           ))}

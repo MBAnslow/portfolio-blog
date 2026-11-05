@@ -14,7 +14,6 @@ import { ScrollProgressRail } from './components/ScrollProgressRail'
 import { SectionHeading } from './components/SectionHeading'
 import { TextureDebugPanel } from './components/TextureDebugPanel'
 import { HeroTitleDebugPanel } from './components/HeroTitleDebugPanel'
-import { heroSkylineRevision } from './heroSkylineRevision'
 import {
   essays,
   otherWork,
@@ -49,6 +48,8 @@ const navigation = storySections.filter(({ id }) =>
 )
 
 const blogPath = `${basePath}blog/`
+const heroMarkRevision = 'badge4'
+const heroSkylineRevision = 'silhouette3'
 const projectAnchor = (title: string) =>
   title
     .normalize('NFKD')
@@ -96,9 +97,28 @@ function App() {
     const resizeObserver = new ResizeObserver(updateAnchor)
     resizeObserver.observe(stage)
     window.addEventListener('resize', updateAnchor)
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const setParallax = (x: number, y: number) => {
+      stage.style.setProperty('--hero-parallax-x', `${x}`)
+      stage.style.setProperty('--hero-parallax-y', `${y}`)
+    }
+    const onMove = (event: PointerEvent) => {
+      if (reducedMotion.matches) return
+      const box = stage.getBoundingClientRect()
+      const x = ((event.clientX - box.left) / box.width) * 2 - 1
+      const y = ((event.clientY - box.top) / box.height) * 2 - 1
+      setParallax(x, y)
+    }
+    const onLeave = () => setParallax(0, 0)
+    stage.addEventListener('pointermove', onMove)
+    stage.addEventListener('pointerleave', onLeave)
+
     return () => {
       resizeObserver.disconnect()
       window.removeEventListener('resize', updateAnchor)
+      stage.removeEventListener('pointermove', onMove)
+      stage.removeEventListener('pointerleave', onLeave)
     }
   }, [])
 
@@ -305,7 +325,14 @@ function App() {
               <span className="masthead__place">Paris / France</span>
             </div>
 
-            <div className="masthead__stage">
+            <div
+              className="masthead__stage"
+              style={
+                {
+                  '--hero-mark-mask': `url(${basePath}media/site-badge.png?v=${heroMarkRevision})`,
+                } as CSSProperties
+              }
+            >
               <h1
                 id="hero-title"
                 style={
@@ -340,77 +367,30 @@ function App() {
               </h1>
 
               <div className="masthead__skyline" aria-hidden="true">
-                <svg
-                  className="masthead__defs"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <defs>
-                    <filter
-                      id="hero-title-grain"
-                      x="0%"
-                      y="0%"
-                      width="100%"
-                      height="100%"
-                      colorInterpolationFilters="sRGB"
-                    >
-                      <feTurbulence
-                        type="fractalNoise"
-                        baseFrequency="0.004 0.006"
-                        numOctaves="2"
-                        seed="41"
-                        result="coarseNoise"
-                      />
-                      <feTurbulence
-                        type="fractalNoise"
-                        baseFrequency="0.11"
-                        numOctaves="4"
-                        seed="78"
-                        result="fineNoise"
-                      />
-                      <feBlend
-                        in="coarseNoise"
-                        in2="fineNoise"
-                        mode="soft-light"
-                        result="variedNoise"
-                      />
-                      <feColorMatrix
-                        in="variedNoise"
-                        type="saturate"
-                        values="0"
-                        result="monochromeNoise"
-                      />
-                      <feComponentTransfer in="monochromeNoise" result="grain">
-                        <feFuncR type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncG type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncB type="linear" slope="1.25" intercept="-0.12" />
-                        <feFuncA type="linear" slope="0.035" />
-                      </feComponentTransfer>
-                      <feComposite
-                        in="grain"
-                        in2="SourceGraphic"
-                        operator="in"
-                        result="clippedGrain"
-                      />
-                      <feBlend
-                        in="SourceGraphic"
-                        in2="clippedGrain"
-                        mode="soft-light"
-                        result="textured"
-                      />
-                      <feComposite
-                        in="textured"
-                        in2="SourceGraphic"
-                        operator="in"
-                      />
-                    </filter>
-                  </defs>
-                </svg>
                 <img
-                  src={`${basePath}media/hero-watercolour-skyline.png?v=${heroSkylineRevision}`}
+                  src={`${basePath}media/hero-skyline-silhouette.png?v=${heroSkylineRevision}`}
                   alt=""
-                  width="2172"
-                  height="724"
+                  width="2170"
+                  height="725"
+                />
+              </div>
+              <div className="masthead__lens" aria-hidden="true">
+                <div className="masthead__lens-zoom">
+                  <img
+                    className="masthead__lens-skyline"
+                    src={`${basePath}media/hero-skyline-silhouette.png?v=${heroSkylineRevision}`}
+                    alt=""
+                    width="2170"
+                    height="725"
+                  />
+                </div>
+              </div>
+              <div className="masthead__mark" aria-hidden="true">
+                <img
+                  src={`${basePath}media/site-badge.png?v=${heroMarkRevision}`}
+                  alt=""
+                  width="1415"
+                  height="1111"
                 />
               </div>
             </div>

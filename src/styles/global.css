@@ -6,7 +6,7 @@
 @property --hero-michael-weight {
   syntax: '<number>';
   inherits: true;
-  initial-value: 260;
+  initial-value: 280;
 }
 
 @property --hn-blue-opacity {
@@ -567,6 +567,8 @@ main {
 .masthead__stage {
   --masthead-stage-inset: clamp(1.5rem, 7vw, 7.5rem);
   --hero-anchor-y: 50%;
+  --hero-parallax-x: 0;
+  --hero-parallax-y: 0;
   position: relative;
   display: grid;
   align-items: center;
@@ -581,20 +583,25 @@ main {
 
 .masthead h1 {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: var(--hero-anchor-y);
   left: 50%;
   width: max-content;
   margin: 0;
   color: var(--blue-dark);
   white-space: nowrap;
-  font-size: var(--hero-title-size, 180px);
+  font-size: var(--hero-title-size, 139px);
   line-height: 0.82;
   text-transform: uppercase;
   transform: translate(
-    calc(-50% + var(--hero-title-x, -83px)),
-    calc(-50% + var(--hero-title-y, -205px))
+    calc(
+      -50% + var(--hero-title-x, -59px) + var(--hero-parallax-x) * 36px
+    ),
+    calc(
+      -50% + var(--hero-title-y, -142px) + var(--hero-parallax-y) * 22px
+    )
   );
+  transition: transform 140ms ease-out;
 }
 
 .masthead h1 > span {
@@ -607,8 +614,8 @@ main {
   -webkit-text-fill-color: #000;
   font-family: 'Montserrat Variable', 'Helvetica Neue', sans-serif;
   font-size: 0.86em;
-  font-variation-settings: 'wght' 260;
-  font-weight: 260;
+  font-variation-settings: 'wght' 280;
+  font-weight: 280;
   letter-spacing: 0.09em;
   line-height: 1;
 }
@@ -635,7 +642,7 @@ main {
 }
 
 .hero-title__base {
-  color: #080808;
+  color: #1e0806;
 }
 
 .hero-title__texture {
@@ -654,46 +661,46 @@ main {
 
 .hero-title__texture--blue {
   z-index: 1;
-  background-color: color-mix(in srgb, #413f60 71%, transparent);
-  -webkit-mask-image: var(--hero-halftone);
-  -webkit-mask-position: 95px 95px;
-  -webkit-mask-size: 730px 730px;
-  mask-image: var(--hero-halftone);
-  mask-position: 95px 95px;
-  mask-size: 730px 730px;
+  background-color: color-mix(in srgb, #ff5542 76%, transparent);
+  -webkit-mask-image: var(--hero-watercolour);
+  -webkit-mask-position: 320px 320px;
+  -webkit-mask-size: 1400px 1400px;
+  mask-image: var(--hero-watercolour);
+  mask-position: 320px 320px;
+  mask-size: 1400px 1400px;
 }
 
 .hero-title__texture--black {
   z-index: 2;
-  background-color: color-mix(in srgb, #317faf 72%, transparent);
+  background-color: color-mix(in srgb, #8331af 22%, transparent);
   -webkit-mask-image: var(--hero-watercolour);
   -webkit-mask-position: 308px 308px;
-  -webkit-mask-size: 1210px 1210px;
+  -webkit-mask-size: 1200px 1200px;
   mask-image: var(--hero-watercolour);
   mask-position: 308px 308px;
-  mask-size: 1210px 1210px;
+  mask-size: 1200px 1200px;
 }
 
 .hero-title__texture--grey {
   z-index: 3;
-  background-color: color-mix(in srgb, #f29f40 53%, transparent);
+  background-color: color-mix(in srgb, #fff700 28%, transparent);
   -webkit-mask-image: var(--hero-watercolour);
-  -webkit-mask-position: 219px 219px;
+  -webkit-mask-position: 210px 210px;
   -webkit-mask-size: 770px 770px;
   mask-image: var(--hero-watercolour);
-  mask-position: 219px 219px;
+  mask-position: 210px 210px;
   mask-size: 770px 770px;
 }
 
 .hero-title__texture--white {
   z-index: 4;
-  background-color: color-mix(in srgb, #9469c9 67%, transparent);
+  background-color: color-mix(in srgb, #ff9214 76%, transparent);
   -webkit-mask-image: var(--hero-paint-burst);
-  -webkit-mask-position: 370px 370px;
-  -webkit-mask-size: 390px 390px;
+  -webkit-mask-position: 341px 341px;
+  -webkit-mask-size: 410px 410px;
   mask-image: var(--hero-paint-burst);
-  mask-position: 370px 370px;
-  mask-size: 390px 390px;
+  mask-position: 341px 341px;
+  mask-size: 410px 410px;
 }
 
 .masthead__skyline {
@@ -701,19 +708,17 @@ main {
   z-index: 0;
   top: var(--hero-anchor-y);
   left: 50%;
-  width: calc(min(90vw, 82rem) * var(--hero-image-scale, 1.61));
+  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 1.61));
   transform: translate(
-    calc(-50% + var(--hero-image-x, 81px)),
-    calc(-50% + var(--hero-image-y, 37px))
+    calc(
+      -50% + var(--hero-skyline-x, 89px) + var(--hero-parallax-x) * 8px
+    ),
+    calc(
+      -50% + var(--hero-skyline-y, 92px) + var(--hero-parallax-y) * 5px
+    )
   );
+  transition: transform 140ms ease-out;
   pointer-events: none;
-}
-
-.masthead__defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
 }
 
 .masthead__skyline img {
@@ -722,7 +727,124 @@ main {
   max-width: none;
   height: auto;
   object-fit: contain;
-  object-position: left bottom;
+  object-position: center bottom;
+}
+
+.masthead__lens {
+  position: absolute;
+  z-index: 1;
+  top: var(--hero-anchor-y);
+  left: 50%;
+  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 0.99));
+  aspect-ratio: 1415 / 1111;
+  overflow: hidden;
+  transform: translate(
+    calc(
+      -50% + var(--hero-image-x, 71px) + var(--hero-parallax-x) * 20px
+    ),
+    calc(
+      -50% + var(--hero-image-y, 79px) + var(--hero-parallax-y) * 12px
+    )
+  );
+  transition: transform 140ms ease-out;
+  pointer-events: none;
+  opacity: var(--hero-lens-opacity, 0.93);
+  -webkit-mask-image: var(--hero-mark-mask);
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: var(--hero-mark-mask);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.masthead__lens-zoom {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--hero-lens-zoom, 1.04));
+  transform-origin: center;
+}
+
+.masthead__lens-skyline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 1.61));
+  max-width: none;
+  height: auto;
+  transform: translate(
+    calc(
+      -50% + var(--hero-skyline-x, 89px) - var(--hero-image-x, 71px) +
+        var(--hero-lens-x, -1px) + var(--hero-parallax-x) * -12px
+    ),
+    calc(
+      -50% + var(--hero-skyline-y, 92px) - var(--hero-image-y, 79px) +
+        var(--hero-lens-y, -1px) + var(--hero-parallax-y) * -7px
+    )
+  );
+  filter:
+    blur(var(--hero-lens-blur, 0px))
+    drop-shadow(
+      calc(var(--hero-parallax-x) * var(--hero-lens-chroma, 28) * 1px)
+      calc(var(--hero-parallax-y) * var(--hero-lens-chroma, 28) * 0.4px)
+      0
+      rgb(
+        255 62 108 /
+          calc(
+            max(abs(var(--hero-parallax-x)), abs(var(--hero-parallax-y))) * 0.58
+          )
+      )
+    )
+    drop-shadow(
+      calc(var(--hero-parallax-x) * var(--hero-lens-chroma, 28) * -1px)
+      calc(var(--hero-parallax-y) * var(--hero-lens-chroma, 28) * -0.4px)
+      0
+      rgb(
+        48 196 255 /
+          calc(
+            max(abs(var(--hero-parallax-x)), abs(var(--hero-parallax-y))) * 0.52
+          )
+      )
+    )
+    hue-rotate(
+      calc(
+        (var(--hero-parallax-x) * 1.1 + var(--hero-parallax-y) * 0.35) *
+          var(--hero-lens-chroma, 28) * 1deg
+      )
+    )
+    saturate(
+      calc(
+        1 + max(abs(var(--hero-parallax-x)), abs(var(--hero-parallax-y))) * 0.22
+      )
+    );
+}
+
+.masthead__mark {
+  position: absolute;
+  z-index: 2;
+  top: var(--hero-anchor-y);
+  left: 50%;
+  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 0.99));
+  transform: translate(
+    calc(
+      -50% + var(--hero-image-x, 71px) + var(--hero-parallax-x) * 20px
+    ),
+    calc(
+      -50% + var(--hero-image-y, 79px) + var(--hero-parallax-y) * 12px
+    )
+  );
+  transition: transform 140ms ease-out;
+  pointer-events: none;
+}
+
+.masthead__mark img {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 @media (max-width: 760px) {
@@ -762,8 +884,26 @@ main {
     --masthead-stage-inset: clamp(1rem, 5vw, 2rem);
   }
 
-  .masthead__skyline img {
-    width: 100%;
+  .masthead__skyline {
+    width: calc(min(70vw, 26rem) * var(--hero-skyline-scale, 1.61));
+  }
+
+  .masthead__mark,
+  .masthead__lens {
+    width: calc(min(72vw, 22rem) * var(--hero-image-scale, 0.99));
+  }
+
+  .masthead__lens-skyline {
+    width: calc(min(70vw, 26rem) * var(--hero-skyline-scale, 1.61));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .masthead h1,
+  .masthead__mark,
+  .masthead__skyline,
+  .masthead__lens {
+    transition: none;
   }
 }
 
