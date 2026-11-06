@@ -653,12 +653,18 @@ main {
   .masthead__stage {
     --hero-title-size: 9.44vw;
     --hero-title-x: -21vw;
-    --hero-image-x: 23.89vw;
+    --hero-image-x: 20.48vw;
     --hero-skyline-x: 0px;
   }
 
   .masthead__bar {
     padding-inline: 1.25rem;
+  }
+}
+
+@media (min-width: 1261px) and (max-width: 1360px) {
+  .masthead__stage {
+    --hero-skyline-x: 0px;
   }
 }
 
@@ -846,10 +852,10 @@ main {
   z-index: 0;
   top: var(--hero-anchor-y);
   left: 50%;
-  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 2.13));
+  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 1.83));
   transform: translate(
     calc(
-      -50% + var(--hero-skyline-x, 31px) + var(--hero-parallax-x) * 8px
+      -50% + var(--hero-skyline-x, 144px) + var(--hero-parallax-x) * 8px
     ),
     calc(
       -50% + var(--hero-skyline-y, 115px) + var(--hero-parallax-y) * 5px
@@ -873,15 +879,15 @@ main {
   z-index: 1;
   top: var(--hero-anchor-y);
   left: 50%;
-  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 1.27));
+  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 1.03));
   aspect-ratio: 1415 / 1111;
   overflow: hidden;
   transform: translate(
     calc(
-      -50% + var(--hero-image-x, 301px) + var(--hero-parallax-x) * 20px
+      -50% + var(--hero-image-x, 258px) + var(--hero-parallax-x) * 20px
     ),
     calc(
-      -50% + var(--hero-image-y, 40px) + var(--hero-parallax-y) * 12px
+      -50% + var(--hero-image-y, 43px) + var(--hero-parallax-y) * 12px
     )
   );
   transition: transform 140ms ease-out;
@@ -946,16 +952,16 @@ main {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 2.13));
+  width: calc(min(46vw, 34rem) * var(--hero-skyline-scale, 1.83));
   max-width: none;
   height: auto;
   transform: translate(
     calc(
-      -50% + var(--hero-skyline-x, 31px) - var(--hero-image-x, 301px) +
+      -50% + var(--hero-skyline-x, 144px) - var(--hero-image-x, 258px) +
         var(--hero-lens-x, -1px) + var(--hero-parallax-x) * -12px
     ),
     calc(
-      -50% + var(--hero-skyline-y, 115px) - var(--hero-image-y, 40px) +
+      -50% + var(--hero-skyline-y, 115px) - var(--hero-image-y, 43px) +
         var(--hero-lens-y, -3px) + var(--hero-parallax-y) * -7px
     )
   );
@@ -1001,13 +1007,13 @@ main {
   z-index: 2;
   top: var(--hero-anchor-y);
   left: 50%;
-  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 1.27));
+  width: calc(min(42vw, 26rem) * var(--hero-image-scale, 1.03));
   transform: translate(
     calc(
-      -50% + var(--hero-image-x, 301px) + var(--hero-parallax-x) * 20px
+      -50% + var(--hero-image-x, 258px) + var(--hero-parallax-x) * 20px
     ),
     calc(
-      -50% + var(--hero-image-y, 40px) + var(--hero-parallax-y) * 12px
+      -50% + var(--hero-image-y, 43px) + var(--hero-parallax-y) * 12px
     )
   );
   transition: transform 140ms ease-out;
