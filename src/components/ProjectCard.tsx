@@ -5,6 +5,7 @@ import type { Project } from '../data/portfolio'
 import { basePath } from '../utils/basePath'
 import { createProjectSymbol } from '../utils/projectSymbol'
 import { ProjectSymbol } from './ProjectSymbol'
+import { SkillsDisclosure } from './SkillsDisclosure'
 
 type ProjectCardProps = {
   project: Project
@@ -621,24 +622,11 @@ export function ProjectCard({
       </div>
       <div className="project-card__footer">
         <div className="project-card__footer-content">
-          <dl className="project-card__skills">
-            <div>
-              <dt>Technical practice</dt>
-              <dd>
-                {project.skills.technical.map((skill) => (
-                  <span key={skill}>{skill}</span>
-                ))}
-              </dd>
-            </div>
-            <div>
-              <dt>Ways of working</dt>
-              <dd>
-                {project.skills.soft.map((skill) => (
-                  <span key={skill}>{skill}</span>
-                ))}
-              </dd>
-            </div>
-          </dl>
+          <SkillsDisclosure
+            className="project-card__skills"
+            technical={project.skills.technical}
+            soft={project.skills.soft}
+          />
         </div>
         <button
           className="project-card__action"

@@ -12,6 +12,7 @@ import { ProjectCard } from './components/ProjectCard'
 import { Reveal } from './components/Reveal'
 import { ScrollProgressRail } from './components/ScrollProgressRail'
 import { SectionHeading } from './components/SectionHeading'
+import { SkillsDisclosure } from './components/SkillsDisclosure'
 import { TextureDebugPanel } from './components/TextureDebugPanel'
 import { HeroTitleDebugPanel } from './components/HeroTitleDebugPanel'
 import {
@@ -49,7 +50,7 @@ const navigation = storySections.filter(({ id }) =>
 )
 
 const blogPath = `${basePath}blog/`
-const heroMarkRevision = 'badge10'
+const heroMarkRevision = 'badge13'
 const heroSkylineRevision = 'silhouette3'
 const projectAnchor = (title: string) =>
   title
@@ -86,6 +87,19 @@ function App() {
       ;[
         '--hero-title-size',
         '--hero-michael-weight',
+        '--hero-anslow-weight',
+        '--hero-role-font',
+        '--hero-role-size',
+        '--hero-role-weight',
+        '--hero-role-tracking',
+        '--hero-practice-font',
+        '--hero-practice-size',
+        '--hero-practice-weight',
+        '--hero-practice-tracking',
+        '--hero-place-font',
+        '--hero-place-size',
+        '--hero-place-weight',
+        '--hero-place-tracking',
         '--hero-title-x',
         '--hero-title-y',
         '--hero-image-scale',
@@ -110,7 +124,7 @@ function App() {
       ].forEach((name) => document.body.style.removeProperty(name))
       document
         .querySelectorAll<HTMLElement>(
-          '.hero-title__texture, .hero-title__base, .masthead__given-name',
+          '.hero-title__texture, .hero-title__base, .masthead__given-name, .masthead__surname',
         )
         .forEach((el) => el.removeAttribute('style'))
     }
@@ -590,24 +604,11 @@ function App() {
                   </div>
                   <div className="other-work-list__details">
                     <p>{item.description}</p>
-                    <dl className="other-work-list__skills">
-                      <div>
-                        <dt>Technical practice</dt>
-                        <dd>
-                          {item.skills.technical.map((skill) => (
-                            <span key={skill}>{skill}</span>
-                          ))}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Ways of working</dt>
-                        <dd>
-                          {item.skills.soft.map((skill) => (
-                            <span key={skill}>{skill}</span>
-                          ))}
-                        </dd>
-                      </div>
-                    </dl>
+                    <SkillsDisclosure
+                      className="other-work-list__skills"
+                      technical={item.skills.technical}
+                      soft={item.skills.soft}
+                    />
                   </div>
                   <Arrow />
                 </a>

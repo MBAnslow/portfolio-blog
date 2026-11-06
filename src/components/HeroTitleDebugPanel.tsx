@@ -42,9 +42,32 @@ type HeroLensWashSettings = {
   end: number
 }
 
+type HeroFontName =
+  | 'mono'
+  | 'montserrat'
+  | 'work'
+  | 'fraunces'
+  | 'caslon'
+  | 'source'
+  | 'poster'
+
+type HeroTextSettings = {
+  font: HeroFontName
+  size: number
+  weight: number
+  tracking: number
+}
+
+type HeroTypeSettings = {
+  role: HeroTextSettings
+  practice: HeroTextSettings
+  place: HeroTextSettings
+}
+
 type HeroLayoutSettings = {
   titleSize: number
   michaelWeight: number
+  anslowWeight: number
   titleX: number
   titleY: number
   imageScale: number
@@ -85,14 +108,41 @@ const defaultHeroSettings: HeroTextureSettings = {
   whiteOpacity: 0.25,
 }
 
+const fontStacks: Record<HeroFontName, string> = {
+  mono: 'var(--mono)',
+  montserrat: "'Montserrat Variable', 'Helvetica Neue', sans-serif",
+  work: 'var(--display)',
+  fraunces: "'Fraunces Variable', Georgia, serif",
+  caslon: 'var(--serif)',
+  source: "'Source Serif 4', Georgia, serif",
+  poster: 'var(--poster)',
+}
+
+const fontChoices: [HeroFontName, string][] = [
+  ['mono', 'DM Mono'],
+  ['montserrat', 'Montserrat'],
+  ['work', 'Work Sans'],
+  ['fraunces', 'Fraunces'],
+  ['caslon', 'Libre Caslon'],
+  ['source', 'Source Serif'],
+  ['poster', 'Bowlby One'],
+]
+
+const defaultTypeSettings: HeroTypeSettings = {
+  role: { font: 'mono', size: 20, weight: 590, tracking: 0.02 },
+  practice: { font: 'mono', size: 14.4, weight: 620, tracking: 0.015 },
+  place: { font: 'mono', size: 14.4, weight: 700, tracking: 0.14 },
+}
+
 const defaultLayoutSettings: HeroLayoutSettings = {
   titleSize: 119,
-  michaelWeight: 280,
+  michaelWeight: 220,
+  anslowWeight: 650,
   titleX: -265,
   titleY: -72,
-  imageScale: 0.99,
-  imageX: 219,
-  imageY: 79,
+  imageScale: 1.27,
+  imageX: 301,
+  imageY: 40,
   skylineScale: 2.13,
   skylineX: 31,
   skylineY: 115,
@@ -106,10 +156,10 @@ const defaultLayoutSettings: HeroLayoutSettings = {
 
 const defaultLensWashSettings: HeroLensWashSettings = {
   angle: 347,
-  color: '#e8a411',
+  color: '#ffae00',
   opacity: 0.8,
-  colorEnd: '#d31717',
-  opacityEnd: 0.45,
+  colorEnd: '#e93f3f',
+  opacityEnd: 0.33,
   fade: 54,
   end: 81,
 }
@@ -189,6 +239,7 @@ function applyLayoutToDOM(s: HeroLayoutSettings) {
   const root = document.body
   root.style.setProperty('--hero-title-size', `${s.titleSize}px`)
   root.style.setProperty('--hero-michael-weight', `${s.michaelWeight}`)
+  root.style.setProperty('--hero-anslow-weight', `${s.anslowWeight}`)
   root.style.setProperty('--hero-title-x', `${s.titleX}px`)
   root.style.setProperty('--hero-title-y', `${s.titleY}px`)
   root.style.setProperty('--hero-image-scale', `${s.imageScale}`)
@@ -210,6 +261,30 @@ function applyLayoutToDOM(s: HeroLayoutSettings) {
       `"wght" ${s.michaelWeight}`,
       'important',
     )
+  })
+  document.querySelectorAll<HTMLElement>('.masthead__surname').forEach((el) => {
+    el.style.setProperty('font-weight', `${s.anslowWeight}`, 'important')
+    el.style.setProperty(
+      'font-variation-settings',
+      `"wght" ${s.anslowWeight}`,
+      'important',
+    )
+  })
+}
+
+function applyTypeToDOM(type: HeroTypeSettings) {
+  const root = document.body
+  ;(
+    [
+      ['role', type.role],
+      ['practice', type.practice],
+      ['place', type.place],
+    ] as [string, HeroTextSettings][]
+  ).forEach(([name, text]) => {
+    root.style.setProperty(`--hero-${name}-font`, fontStacks[text.font])
+    root.style.setProperty(`--hero-${name}-size`, `${text.size}px`)
+    root.style.setProperty(`--hero-${name}-weight`, `${text.weight}`)
+    root.style.setProperty(`--hero-${name}-tracking`, `${text.tracking}em`)
   })
 }
 
@@ -285,16 +360,69 @@ function LayerSection({
   )
 }
 
+function TextCard({
+  title,
+  value,
+  onChange,
+}: {
+  title: string
+  value: HeroTextSettings
+  onChange: (key: keyof HeroTextSettings, next: string | number) => void
+}) {
+  return (
+    <div style={{ minWidth: 0, padding: 8, background: '#1a1a1a', borderRadius: 6 }}>
+      <div style={{ fontWeight: 700, marginBottom: 4 }}>{title}</div>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        Font
+        <select
+          value={value.font}
+          onChange={(event) => onChange('font', event.target.value)}
+          style={{ flex: 1, minWidth: 0 }}
+        >
+          {fontChoices.map(([id, label]) => (
+            <option key={id} value={id}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </label>
+      {(
+        [
+          ['size', 'Size (px)', value.size, 8, 40, 0.5],
+          ['weight', 'Weight', value.weight, 100, 900, 10],
+          ['tracking', 'Tracking (em)', value.tracking, -0.08, 0.4, 0.005],
+        ] as [keyof HeroTextSettings, string, number, number, number, number][]
+      ).map(([key, label, current, min, max, step]) => (
+        <label key={key} style={{ display: 'block', marginTop: 4 }}>
+          {label}: <strong>{Number(current.toFixed(3))}</strong>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={current}
+            onInput={(event) => onChange(key, Number(event.currentTarget.value))}
+            onChange={(event) => onChange(key, Number(event.currentTarget.value))}
+            style={{ width: '100%' }}
+          />
+        </label>
+      ))}
+    </div>
+  )
+}
+
 const presetId = JSON.stringify({
   defaultHeroSettings,
   defaultLayoutSettings,
   defaultLensWashSettings,
+  defaultTypeSettings,
 })
 
 export function HeroTitleDebugPanel() {
   const [s, setS] = useState(defaultHeroSettings)
   const [layout, setLayout] = useState(defaultLayoutSettings)
   const [wash, setWash] = useState(defaultLensWashSettings)
+  const [type, setType] = useState(defaultTypeSettings)
   const [open, setOpen] = useState(true)
   const [copied, setCopied] = useState(false)
   const stateRef = useRef(s)
@@ -303,18 +431,22 @@ export function HeroTitleDebugPanel() {
   layoutRef.current = layout
   const washRef = useRef(wash)
   washRef.current = wash
+  const typeRef = useRef(type)
+  typeRef.current = type
 
   useLayoutEffect(() => {
     setS(defaultHeroSettings)
     setLayout(defaultLayoutSettings)
     setWash(defaultLensWashSettings)
+    setType(defaultTypeSettings)
   }, [presetId])
 
   useLayoutEffect(() => {
     applyToDOM(s)
     applyLayoutToDOM(layout)
     applyLensWashToDOM(wash)
-  }, [s, layout, wash])
+    applyTypeToDOM(type)
+  }, [s, layout, wash, type])
 
   const update = useCallback((k: keyof HeroTextureSettings, v: string | number) => {
     setS((prev) => ({ ...prev, [k]: v }))
@@ -327,6 +459,13 @@ export function HeroTitleDebugPanel() {
   const updateWash = useCallback(
     (key: keyof HeroLensWashSettings, value: string | number) => {
       setWash((prev) => ({ ...prev, [key]: value }))
+    },
+    [],
+  )
+
+  const updateType = useCallback(
+    (group: keyof HeroTypeSettings, key: keyof HeroTextSettings, value: string | number) => {
+      setType((prev) => ({ ...prev, [group]: { ...prev[group], [key]: value } }))
     },
     [],
   )
@@ -345,7 +484,7 @@ export function HeroTitleDebugPanel() {
       right: 0,
       bottom: 0,
       zIndex: 10000,
-      maxHeight: '36vh',
+      maxHeight: '46vh',
       overflow: 'auto',
       padding: '8px 12px 10px',
       font: '11px/1.3 ui-monospace, monospace',
@@ -353,7 +492,7 @@ export function HeroTitleDebugPanel() {
       background: 'rgb(0 0 0 / 94%)',
       borderTop: '2px solid #ffd257',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: open ? 8 : 0 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, marginBottom: open ? 8 : 0 }}>
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
@@ -363,7 +502,7 @@ export function HeroTitleDebugPanel() {
         </button>
         {open && (
           <>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 180 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, flex: '1 1 16rem', minWidth: 180 }}>
               Michael thickness: <strong>{layout.michaelWeight}</strong>
               <input
                 type="range"
@@ -380,6 +519,23 @@ export function HeroTitleDebugPanel() {
                 style={{ flex: 1 }}
               />
             </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, flex: '1 1 16rem', minWidth: 180 }}>
+              Anslow thickness: <strong>{layout.anslowWeight}</strong>
+              <input
+                type="range"
+                min={100}
+                max={900}
+                step={10}
+                value={layout.anslowWeight}
+                onInput={(event) =>
+                  updateLayout('anslowWeight', Number(event.currentTarget.value))
+                }
+                onChange={(event) =>
+                  updateLayout('anslowWeight', Number(event.currentTarget.value))
+                }
+                style={{ flex: 1 }}
+              />
+            </label>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               Fill
               <input type="color" value={s.fillColor} onChange={e => update('fillColor', e.target.value)} />
@@ -390,6 +546,7 @@ export function HeroTitleDebugPanel() {
               onClick={() => {
                 navigator.clipboard.writeText(JSON.stringify({
                   layout: layoutRef.current,
+                  type: typeRef.current,
                   lensWash: washRef.current,
                   textures: stateRef.current,
                 }, null, 2))
@@ -406,9 +563,11 @@ export function HeroTitleDebugPanel() {
                 setS(defaultHeroSettings)
                 setLayout(defaultLayoutSettings)
                 setWash(defaultLensWashSettings)
+                setType(defaultTypeSettings)
                 applyToDOM(defaultHeroSettings)
                 applyLayoutToDOM(defaultLayoutSettings)
                 applyLensWashToDOM(defaultLensWashSettings)
+                applyTypeToDOM(defaultTypeSettings)
               }}
             >
               Reset
@@ -425,6 +584,20 @@ export function HeroTitleDebugPanel() {
             gap: 8,
           }}
         >
+          {(
+            [
+              ['Research Engineer', 'role'],
+              ['Practices', 'practice'],
+              ['Paris / France', 'place'],
+            ] as [string, keyof HeroTypeSettings][]
+          ).map(([title, key]) => (
+            <TextCard
+              key={key}
+              title={title}
+              value={type[key]}
+              onChange={(field, value) => updateType(key, field, value)}
+            />
+          ))}
           {(
             [
               [
