@@ -49,7 +49,7 @@ const navigation = storySections.filter(({ id }) =>
 )
 
 const blogPath = `${basePath}blog/`
-const heroMarkRevision = 'badge4'
+const heroMarkRevision = 'badge10'
 const heroSkylineRevision = 'silhouette3'
 const projectAnchor = (title: string) =>
   title
@@ -100,6 +100,13 @@ function App() {
         '--hero-lens-blur',
         '--hero-lens-opacity',
         '--hero-lens-chroma',
+        '--hero-lens-wash-angle',
+        '--hero-lens-wash-color',
+        '--hero-lens-wash-opacity',
+        '--hero-lens-wash-color-end',
+        '--hero-lens-wash-opacity-end',
+        '--hero-lens-wash-fade',
+        '--hero-lens-wash-end',
       ].forEach((name) => document.body.style.removeProperty(name))
       document
         .querySelectorAll<HTMLElement>(
@@ -362,7 +369,7 @@ function App() {
               className="masthead__stage"
               style={
                 {
-                  '--hero-mark-mask': `url(${basePath}media/site-badge.png?v=${heroMarkRevision})`,
+                  '--hero-mark-mask': `url(${basePath}media/site-badge-lens-mask.png?v=${heroMarkRevision})`,
                 } as CSSProperties
               }
             >
@@ -397,15 +404,26 @@ function App() {
                       </span>
                   ))}
                 </span>
+                <p className="masthead__role">Research Engineer / Innovator</p>
               </h1>
 
-              <div className="masthead__skyline" aria-hidden="true">
+              <div className="masthead__skyline">
                 <img
                   src={`${basePath}media/hero-skyline-silhouette.png?v=${heroSkylineRevision}`}
                   alt=""
+                  aria-hidden="true"
                   width="2170"
                   height="725"
                 />
+                <div className="masthead__bar">
+                  <ul className="masthead__practice" aria-label="Core practice">
+                    <li>AI</li>
+                    <li>Interactive systems</li>
+                    <li>Creative technology</li>
+                    <li>Research</li>
+                  </ul>
+                  <span className="masthead__place">Paris / France</span>
+                </div>
               </div>
               <div className="masthead__title-glow" aria-hidden="true" />
               <div className="masthead__lens" aria-hidden="true">
@@ -427,16 +445,6 @@ function App() {
                   height="1111"
                 />
               </div>
-            </div>
-            <div className="masthead__bar">
-              <p className="masthead__role">Research Engineer / Innovator</p>
-              <ul className="masthead__practice" aria-label="Core practice">
-                <li>AI</li>
-                <li>Interactive systems</li>
-                <li>Creative technology</li>
-                <li>Research</li>
-              </ul>
-              <span className="masthead__place">Paris / France</span>
             </div>
           </div>
         </section>

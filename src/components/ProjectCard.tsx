@@ -349,12 +349,18 @@ export function ProjectCard({
       body.style.removeProperty('--description-font-size')
 
       const descriptionRect = description.getBoundingClientRect()
-      const footerGap = compact ? 16 : 48
-      const overflow =
-        descriptionRect.bottom + footerGap - body.getBoundingClientRect().bottom
 
-      if (overflow > 1) {
-        body.style.minHeight = `${Math.ceil(body.clientHeight + overflow)}px`
+      if (compact) {
+        body.style.minHeight = `${Math.ceil(
+          descriptionRect.bottom - body.getBoundingClientRect().top + 20,
+        )}px`
+      } else {
+        const overflow =
+          descriptionRect.bottom + 48 - body.getBoundingClientRect().bottom
+
+        if (overflow > 1) {
+          body.style.minHeight = `${Math.ceil(body.clientHeight + overflow)}px`
+        }
       }
 
       const maskWidth = Math.max(1, Math.ceil(descriptionRect.width))

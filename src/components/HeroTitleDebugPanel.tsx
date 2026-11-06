@@ -32,6 +32,16 @@ export type HeroTextureSettings = {
   whiteOpacity: number
 }
 
+type HeroLensWashSettings = {
+  angle: number
+  color: string
+  opacity: number
+  colorEnd: string
+  opacityEnd: number
+  fade: number
+  end: number
+}
+
 type HeroLayoutSettings = {
   titleSize: number
   michaelWeight: number
@@ -57,41 +67,51 @@ const defaultHeroSettings: HeroTextureSettings = {
   blueColor: '#ff5542',
   blueSize: 1400,
   blueOffset: 320,
-  blueOpacity: 0.76,
+  blueOpacity: 0.43,
   blackTexture: 'watercolour',
-  blackColor: '#8331af',
+  blackColor: '#3151af',
   blackSize: 1200,
-  blackOffset: 308,
-  blackOpacity: 0.22,
+  blackOffset: 258,
+  blackOpacity: 0.38,
   greyTexture: 'watercolour',
   greyColor: '#fff700',
   greySize: 770,
   greyOffset: 210,
-  greyOpacity: 0.28,
+  greyOpacity: 0.13,
   whiteTexture: 'paintBurst',
   whiteColor: '#ff9214',
   whiteSize: 410,
   whiteOffset: 341,
-  whiteOpacity: 0.76,
+  whiteOpacity: 0.25,
 }
 
 const defaultLayoutSettings: HeroLayoutSettings = {
-  titleSize: 139,
+  titleSize: 119,
   michaelWeight: 280,
-  titleX: -59,
-  titleY: -142,
+  titleX: -265,
+  titleY: -72,
   imageScale: 0.99,
-  imageX: 71,
+  imageX: 219,
   imageY: 79,
-  skylineScale: 1.61,
-  skylineX: 89,
-  skylineY: 92,
-  lensZoom: 1.04,
+  skylineScale: 2.13,
+  skylineX: 31,
+  skylineY: 115,
+  lensZoom: 1.16,
   lensX: -1,
-  lensY: -1,
+  lensY: -3,
   lensBlur: 0,
   lensOpacity: 0.93,
   lensChroma: 28,
+}
+
+const defaultLensWashSettings: HeroLensWashSettings = {
+  angle: 347,
+  color: '#e8a411',
+  opacity: 0.8,
+  colorEnd: '#d31717',
+  opacityEnd: 0.45,
+  fade: 54,
+  end: 81,
 }
 
 function textureUrl(texture: TextureName) {
@@ -193,6 +213,17 @@ function applyLayoutToDOM(s: HeroLayoutSettings) {
   })
 }
 
+function applyLensWashToDOM(s: HeroLensWashSettings) {
+  const root = document.body
+  root.style.setProperty('--hero-lens-wash-angle', `${s.angle}deg`)
+  root.style.setProperty('--hero-lens-wash-color', s.color)
+  root.style.setProperty('--hero-lens-wash-opacity', `${s.opacity}`)
+  root.style.setProperty('--hero-lens-wash-color-end', s.colorEnd)
+  root.style.setProperty('--hero-lens-wash-opacity-end', `${s.opacityEnd}`)
+  root.style.setProperty('--hero-lens-wash-fade', `${s.fade}%`)
+  root.style.setProperty('--hero-lens-wash-end', `${s.end}%`)
+}
+
 type SectionProps = {
   label: string
   texture: TextureName
@@ -254,27 +285,36 @@ function LayerSection({
   )
 }
 
-const presetId = JSON.stringify({ defaultHeroSettings, defaultLayoutSettings })
+const presetId = JSON.stringify({
+  defaultHeroSettings,
+  defaultLayoutSettings,
+  defaultLensWashSettings,
+})
 
 export function HeroTitleDebugPanel() {
   const [s, setS] = useState(defaultHeroSettings)
   const [layout, setLayout] = useState(defaultLayoutSettings)
+  const [wash, setWash] = useState(defaultLensWashSettings)
   const [open, setOpen] = useState(true)
   const [copied, setCopied] = useState(false)
   const stateRef = useRef(s)
   stateRef.current = s
   const layoutRef = useRef(layout)
   layoutRef.current = layout
+  const washRef = useRef(wash)
+  washRef.current = wash
 
   useLayoutEffect(() => {
     setS(defaultHeroSettings)
     setLayout(defaultLayoutSettings)
+    setWash(defaultLensWashSettings)
   }, [presetId])
 
   useLayoutEffect(() => {
     applyToDOM(s)
     applyLayoutToDOM(layout)
-  }, [s, layout])
+    applyLensWashToDOM(wash)
+  }, [s, layout, wash])
 
   const update = useCallback((k: keyof HeroTextureSettings, v: string | number) => {
     setS((prev) => ({ ...prev, [k]: v }))
@@ -283,6 +323,13 @@ export function HeroTitleDebugPanel() {
   const updateLayout = useCallback((key: keyof HeroLayoutSettings, value: number) => {
     setLayout((prev) => ({ ...prev, [key]: value }))
   }, [])
+
+  const updateWash = useCallback(
+    (key: keyof HeroLensWashSettings, value: string | number) => {
+      setWash((prev) => ({ ...prev, [key]: value }))
+    },
+    [],
+  )
 
   const layers: Omit<SectionProps, 'onUpdate'>[] = [
     { label: '🔵 Blue layer', texture: s.blueTexture, color: s.blueColor, size: s.blueSize, offset: s.blueOffset, opacity: s.blueOpacity, textureKey: 'blueTexture', colorKey: 'blueColor', sizeKey: 'blueSize', offsetKey: 'blueOffset', opacityKey: 'blueOpacity' },
@@ -343,6 +390,7 @@ export function HeroTitleDebugPanel() {
               onClick={() => {
                 navigator.clipboard.writeText(JSON.stringify({
                   layout: layoutRef.current,
+                  lensWash: washRef.current,
                   textures: stateRef.current,
                 }, null, 2))
                 setCopied(true)
@@ -357,8 +405,10 @@ export function HeroTitleDebugPanel() {
               onClick={() => {
                 setS(defaultHeroSettings)
                 setLayout(defaultLayoutSettings)
+                setWash(defaultLensWashSettings)
                 applyToDOM(defaultHeroSettings)
                 applyLayoutToDOM(defaultLayoutSettings)
+                applyLensWashToDOM(defaultLensWashSettings)
               }}
             >
               Reset
@@ -441,6 +491,56 @@ export function HeroTitleDebugPanel() {
                   />
                 </label>
               ))}
+              {title === 'Lens' && (
+                <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px solid #333' }}>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>Gradient</div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    Start
+                    <input
+                      type="color"
+                      value={wash.color}
+                      onChange={(event) => updateWash('color', event.target.value)}
+                    />
+                    <span style={{ fontSize: 10, opacity: 0.7 }}>{wash.color}</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                    End
+                    <input
+                      type="color"
+                      value={wash.colorEnd}
+                      onChange={(event) => updateWash('colorEnd', event.target.value)}
+                    />
+                    <span style={{ fontSize: 10, opacity: 0.7 }}>{wash.colorEnd}</span>
+                  </label>
+                  {(
+                    [
+                      ['angle', 'Angle', wash.angle, 0, 360, 1],
+                      ['opacity', 'Start strength', wash.opacity, 0, 1, 0.01],
+                      ['opacityEnd', 'End strength', wash.opacityEnd, 0, 1, 0.01],
+                      ['fade', 'Fade start %', wash.fade, 0, 100, 1],
+                      ['end', 'Fade end %', wash.end, 0, 100, 1],
+                    ] as [keyof HeroLensWashSettings, string, number, number, number, number][]
+                  ).map(([key, label, value, min, max, step]) => (
+                    <label key={key} style={{ display: 'block', marginTop: 4 }}>
+                      {label}: <strong>{value}</strong>
+                      <input
+                        type="range"
+                        min={min}
+                        max={max}
+                        step={step}
+                        value={value}
+                        onInput={(event) =>
+                          updateWash(key, Number(event.currentTarget.value))
+                        }
+                        onChange={(event) =>
+                          updateWash(key, Number(event.currentTarget.value))
+                        }
+                        style={{ width: '100%' }}
+                      />
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
           {layers.map(layer => (
