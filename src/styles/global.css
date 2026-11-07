@@ -1222,7 +1222,7 @@ html:has(.masthead) {
   align-items: start;
   margin-bottom: clamp(3.5rem, 7vw, 7rem);
   padding-top: 1.6rem;
-  grid-template-columns: 0.45fr 1.4fr 1fr;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
 }
 
 .section-heading::before,
@@ -1320,7 +1320,7 @@ html:has(.masthead) {
 
 @media (min-width: 901px) {
   .about-section .section-heading {
-    grid-template-columns: 0.3fr 1.65fr 0.9fr;
+    grid-template-columns: 1.65fr 0.9fr;
   }
 
   body:not(.blog-theme) .about-section .section-heading h2 {
@@ -1359,13 +1359,6 @@ html:has(.masthead) {
 .writing-section .section-heading::before {
   height: 4px;
   background: var(--paper-light);
-}
-
-.section-heading__index {
-  color: var(--terracotta);
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  font-weight: 500;
 }
 
 .section-heading h2 {
@@ -2215,11 +2208,7 @@ html:has(.masthead) {
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  grid-template-columns: 3rem minmax(0, 1fr) auto;
-}
-
-.connect-panel__topline span:first-child {
-  color: var(--terracotta);
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .connect-panel__topline span:last-child {
@@ -2667,7 +2656,7 @@ body:not(.blog-theme) .site-footer {
 
   .section-heading {
     gap: 1rem;
-    grid-template-columns: 4rem 1.2fr 1fr;
+    grid-template-columns: 1.2fr 1fr;
   }
 
   .project-card__body {
@@ -2759,7 +2748,7 @@ body:not(.blog-theme) .site-footer {
 
   .section-heading {
     margin-bottom: 3.5rem;
-    grid-template-columns: 3rem 1fr;
+    grid-template-columns: 1fr;
   }
 
   .section-heading h2 {
@@ -2768,7 +2757,6 @@ body:not(.blog-theme) .site-footer {
 
   .section-heading p {
     margin-top: 1.25rem;
-    grid-column: 2;
   }
 
   .project-card {
@@ -2934,7 +2922,7 @@ body:not(.blog-theme) .site-footer {
   }
 
   .connect-panel__topline {
-    grid-template-columns: 2.25rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .connect-panel__topline span:last-child {
@@ -4855,10 +4843,6 @@ body:not(.blog-theme) .site-footer {
 
 .capabilities-section .section-heading {
   border-color: var(--ink);
-}
-
-.capabilities-section .section-heading__index {
-  color: var(--terracotta);
 }
 
 .capabilities__positioning {
@@ -9391,11 +9375,6 @@ html[data-project-transition='expand']
   transform: rotate(2deg);
 }
 
-.education-section .section-heading__index {
-  color: var(--terracotta);
-  font-weight: 700;
-}
-
 .side-interest-accordion .project-card {
   min-height: clamp(22rem, 36vw, 31rem);
 }
@@ -10096,10 +10075,6 @@ html[data-project-transition='expand']
 .other-work-section .section-heading::before {
   height: 4px;
   background: var(--ink);
-}
-
-.other-work-section .section-heading__index {
-  color: var(--ink);
 }
 
 .other-work-section .section-heading::after {

@@ -480,7 +480,6 @@ function App() {
 
         <section className="page-section about-section" id="about">
           <SectionHeading
-            index="01"
             title="Between systems and stories"
             note="A practice grounded in engineering, expanded through research and philosophy."
           />
@@ -491,7 +490,6 @@ function App() {
 
         <section className="page-section work-section" id="projects">
           <SectionHeading
-            index="02"
             title="Selected work"
             note="Projects that move between artificial intelligence, creative practice and collective inquiry."
           />
@@ -582,7 +580,6 @@ function App() {
           id="other-work"
         >
           <SectionHeading
-            index="03"
             title="Other work"
             note="Previous projects, collaborations, research threads, wider practice."
           />
@@ -620,7 +617,6 @@ function App() {
 
         <section className="page-section research-section" id="research">
           <SectionHeading
-            index="04"
             title="Research"
             note="Selected publications across music AI, natural language processing, knowledge representation and data analysis."
           />
@@ -671,7 +667,6 @@ function App() {
           <Reveal>
             <div className="connect-panel">
               <div className="connect-panel__topline">
-                <span>05</span>
                 <span>Have an unusual idea?</span>
                 <span>Let&apos;s make it tangible</span>
               </div>
