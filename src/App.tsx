@@ -33,6 +33,7 @@ const storySections = [
   { label: 'Projects', id: 'projects' },
   { label: 'Other work', id: 'other-work' },
   { label: 'Research', id: 'research' },
+  { label: 'Connect', id: 'connect' },
   { label: 'Writing', id: 'writing' },
 ]
 
@@ -50,7 +51,7 @@ const navigation = storySections.filter(({ id }) =>
 )
 
 const blogPath = `${basePath}blog/`
-const heroMarkRevision = 'badge13'
+const heroMarkRevision = 'badge14'
 const heroSkylineRevision = 'silhouette3'
 const projectAnchor = (title: string) =>
   title
@@ -666,6 +667,40 @@ function App() {
           </Reveal>
         </section>
 
+        <section className="connect-section" id="connect" aria-labelledby="connect-title">
+          <Reveal>
+            <div className="connect-panel">
+              <div className="connect-panel__topline">
+                <span>05</span>
+                <span>Have an unusual idea?</span>
+                <span>Let&apos;s make it tangible</span>
+              </div>
+              <div className="connect-panel__body">
+                <h2 id="connect-title">
+                  Let&apos;s <span>connect.</span>
+                </h2>
+                <p>
+                  Open to conversations about creative AI, research prototypes,
+                  philosophy and emerging forms of experience.
+                </p>
+              </div>
+              <ul className="connect-panel__links">
+                {profileLinks.map((link, index) => (
+                  <li key={link.label}>
+                    <a href={link.url} target="_blank" rel="noreferrer">
+                      <span className="connect-panel__index">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="connect-panel__label">{link.label}</span>
+                      <Arrow />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        </section>
+
         <section className="writing-section" id="writing">
           <div className="writing-section__inner">
             <div className="blog-gateway">
@@ -735,37 +770,41 @@ function App() {
           </div>
         </section>
 
-        <section className="connect-section" id="connect">
-          <div className="connect-section__kicker">
-            <span>Have an unusual idea?</span>
-            <span>Let&apos;s make it tangible.</span>
-          </div>
-          <div className="connect-section__compact">
-            <h2>Let&apos;s connect.</h2>
-            <div className="connect-section__footer">
-              <p>
-                Open to conversations about creative AI, research prototypes,
-                philosophy and emerging forms of experience.
-              </p>
-              <ul>
-                {profileLinks.map((link) => (
-                  <li key={link.label}>
-                    <a href={link.url} target="_blank" rel="noreferrer">
-                      {link.label}
-                      <Arrow />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer className="site-footer">
-        <span>Michael Anslow © {new Date().getFullYear()}</span>
-        <a href="#top">Back to top ↑</a>
-        <span>Built with curiosity in Paris</span>
+        <div className="site-footer__inner">
+          <div className="site-footer__identity">
+            <a className="site-footer__mark" href="#top" aria-label="Michael Anslow, back to top">
+              <span>M</span>
+              <span>A</span>
+            </a>
+            <p>
+              Michael Anslow
+              <span>Research Engineer / Innovator</span>
+            </p>
+          </div>
+          <nav className="site-footer__nav" aria-label="Footer navigation">
+            <ul>
+              {storySections.map(({ label, id }) => (
+                <li key={id}>
+                  <a href={`#${id}`}>{label}</a>
+                </li>
+              ))}
+              <li>
+                <a href={blogPath}>Blog</a>
+              </li>
+            </ul>
+          </nav>
+          <a className="site-footer__top" href="#top">
+            Back to top
+            <span aria-hidden="true">↑</span>
+          </a>
+        </div>
+        <div className="site-footer__base">
+          <span>© {new Date().getFullYear()} Michael Anslow</span>
+          <span>Built with curiosity in Paris / France</span>
+        </div>
       </footer>
     </>
   )
