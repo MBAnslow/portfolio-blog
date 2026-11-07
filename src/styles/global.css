@@ -193,18 +193,21 @@ svg {
   top: 0;
   width: 100%;
   min-height: var(--site-header-height);
-  border-bottom: 1.5px solid var(--ink);
-  color: var(--ink);
-  background: var(--paper);
+  border-bottom: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  padding-inline: var(--page-pad);
+  color: var(--paper-light);
+  background: var(--ink);
   isolation: isolate;
 }
 
 .site-header__inner {
   display: grid;
-  width: min(100%, var(--max-width));
+  width: min(100%, calc(var(--max-width) - 2 * var(--page-pad)));
   min-height: inherit;
   margin-inline: auto;
-  grid-template-columns: 5rem 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
 /* White plus difference blending reads as ink on paper and paper on the dark sections. */
@@ -376,12 +379,14 @@ svg {
 
 .monogram {
   display: flex;
+  width: 2.4rem;
+  height: 2.4rem;
   align-items: center;
   justify-content: center;
-  border-right: 1.5px solid var(--ink);
-  color: var(--ink);
+  border: 1.5px solid color-mix(in srgb, var(--paper) 55%, transparent);
+  color: inherit;
   font-family: 'Montserrat Variable', 'Helvetica Neue', sans-serif;
-  font-size: 1.45rem;
+  font-size: 1.05rem;
   line-height: 1;
   text-transform: uppercase;
   transition: color 160ms ease, background 160ms ease;
@@ -401,14 +406,14 @@ svg {
 
 .monogram:hover,
 .monogram:focus-visible {
-  color: var(--paper);
-  background: var(--ink);
+  color: var(--ink);
+  background: var(--paper);
 }
 
 .site-header nav {
   display: flex;
   align-items: stretch;
-  padding-inline: clamp(0.5rem, 3vw, 3.25rem);
+  justify-content: center;
 }
 
 .site-header nav ul {
@@ -425,36 +430,25 @@ svg {
   display: flex;
   height: 100%;
   align-items: center;
-  padding: 0.25rem 0.55rem;
+  border-bottom: 2px solid transparent;
+  padding: 0.15rem 0.15rem 0.2rem;
   font-family: var(--mono);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.035em;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  transition: color 160ms ease, border-color 160ms ease;
 }
 
 .site-header nav a::after {
-  position: absolute;
-  right: 0.3rem;
-  bottom: 0.75rem;
-  left: 0.3rem;
-  height: 3px;
-  content: '';
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 180ms ease;
+  content: none;
 }
 
-.site-header nav a:hover::after,
-.site-header nav a[aria-current='location']::after {
-  transform: scaleX(1);
-}
-
-.site-header nav a span {
-  margin-right: 0.55rem;
-  color: var(--terracotta);
-  font-size: 0.58rem;
+.site-header nav a:hover,
+.site-header nav a:focus-visible,
+.site-header nav a[aria-current='location'] {
+  border-bottom-color: var(--ochre);
+  color: var(--ochre);
 }
 
 .mobile-blog-nav {
@@ -462,78 +456,42 @@ svg {
 }
 
 .header-link {
-  display: grid;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.05rem 0.4rem;
-  min-width: 9.5rem;
-  border-left: 1.5px solid var(--ink);
-  padding: 0.3rem 0.75rem;
-  color: white;
-  background: var(--ink);
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
-  text-transform: uppercase;
-  transition: color 160ms ease, background 160ms ease;
-}
-
-.header-link span {
-  width: fit-content;
-  padding: 0;
-  color: white;
+  gap: 0.55rem;
+  border: 1.5px solid color-mix(in srgb, var(--paper) 55%, transparent);
+  padding: 0.55rem 0.85rem;
+  color: inherit;
   background: transparent;
-  font-family: var(--poster);
-  font-size: 0.62rem;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  line-height: 1;
-  transform: rotate(-1deg);
-}
-
-.header-link strong {
-  width: fit-content;
-  padding: 0.12rem 0.42rem 0.08rem;
-  color: var(--ink);
-  background: var(--ochre);
-  font-family: var(--poster);
-  font-size: 1.35rem;
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 0.8;
-  transform: rotate(-1deg);
-  transition: transform 160ms ease;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
 .header-link svg {
-  color: var(--ochre);
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  width: 0.95rem;
   transition: transform 160ms ease;
 }
 
-.header-link:hover svg {
+.header-link:hover svg,
+.header-link:focus-visible svg {
   transform: translate(0.15rem, -0.15rem);
 }
 
-.header-link:hover {
-  color: white;
-  background: var(--ink);
-}
-
-.header-link:hover span {
-  color: white;
-  background: transparent;
-}
-
-.header-link:hover strong {
+.header-link:hover,
+.header-link:focus-visible {
+  border-color: var(--ochre);
   color: var(--ink);
-  transform: rotate(0) scale(1.04);
+  background: var(--ochre);
 }
 
 .header-link svg,
 .text-link svg,
 .writing-profile-link svg,
-.connect-panel__links svg {
+.connect-panel__links a > svg:last-child {
   width: 1.1rem;
   fill: none;
   stroke: currentColor;
@@ -2275,12 +2233,13 @@ html:has(.masthead) {
   transition: color 160ms ease, background 160ms ease;
 }
 
-.connect-panel__index {
-  color: var(--terracotta);
-  font-size: 0.62rem;
+.connect-panel__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
 }
 
-.connect-panel__links svg {
+.connect-panel__links a > svg:last-child {
   width: 1.15rem;
   transition: transform 160ms ease;
 }
@@ -2290,8 +2249,8 @@ html:has(.masthead) {
   color: var(--terracotta);
 }
 
-.connect-panel__links a:hover svg,
-.connect-panel__links a:focus-visible svg {
+.connect-panel__links a:hover > svg:last-child,
+.connect-panel__links a:focus-visible > svg:last-child {
   transform: translate(0.2rem, -0.2rem);
 }
 
@@ -2613,7 +2572,7 @@ body:not(.blog-theme) .site-footer {
 
 @media (max-width: 900px) {
   .site-header__inner {
-    grid-template-columns: 4.25rem 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .header-link {
@@ -2622,26 +2581,10 @@ body:not(.blog-theme) .site-footer {
 
   .mobile-blog-nav {
     display: block;
-    border-left: 1px solid var(--ink);
-    background: var(--ink);
-  }
-
-  .site-header nav .mobile-blog-nav a {
-    padding-inline: clamp(0.45rem, 1.8vw, 0.8rem);
-    color: white;
-    font-family: var(--poster);
-    font-size: clamp(0.72rem, 2.2vw, 0.9rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
   }
 
   .site-header nav .mobile-blog-nav a::after {
-    right: 0.4rem;
-    bottom: 0.45rem;
-    left: 0.4rem;
-    height: 3px;
-    background: var(--terracotta);
-    transform: scaleX(1);
+    background: var(--ochre);
   }
 
   .site-header nav {
@@ -2718,7 +2661,7 @@ body:not(.blog-theme) .site-footer {
   }
 
   .site-header__inner {
-    grid-template-columns: 3.75rem 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .site-header nav ul {
@@ -2732,10 +2675,7 @@ body:not(.blog-theme) .site-footer {
   }
 
   .site-header nav a::after {
-    right: 0.25rem;
-    bottom: 0.45rem;
-    left: 0.25rem;
-    height: 3px;
+    content: none;
   }
 
   .text-link {
@@ -2977,7 +2917,7 @@ body:not(.blog-theme) .site-footer {
 
 @media (max-width: 360px) {
   .site-header__inner {
-    grid-template-columns: 3.25rem minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .site-header nav {
@@ -6565,8 +6505,8 @@ body:not(.blog-theme) {
 }
 
 body:not(.blog-theme) .site-header {
-  border-bottom-width: 2px;
-  background: var(--page-paper);
+  background: var(--ink);
+  color: var(--paper-light);
 }
 
 body:not(.blog-theme) .site-header nav .mobile-blog-nav a::after {
@@ -10796,8 +10736,7 @@ body:not(.blog-theme)::after {
 }
 
 /* Hand-ruled strokes: gentle pressure changes, a pen lift at the end, dry drag. */
-body:not(.blog-theme) .section-heading::before,
-body:not(.blog-theme) .site-header::after {
+body:not(.blog-theme) .section-heading::before {
   -webkit-mask:
     var(--ink-rule-stroke) 0 0 / 100% 100% no-repeat,
     var(--ink-rule-drag) 0 0 / 480px 100% repeat-x;
@@ -10808,19 +10747,8 @@ body:not(.blog-theme) .site-header::after {
   mask-composite: intersect;
 }
 
-body:not(.blog-theme) .site-header {
-  border-bottom-color: transparent;
-}
-
 body:not(.blog-theme) .site-header::after {
-  position: absolute;
-  right: 0;
-  bottom: -2px;
-  left: 0;
-  height: 2px;
-  pointer-events: none;
-  content: '';
-  background: var(--ink);
+  display: none;
 }
 
 /* The toolkit grid lines are ink showing between cells, so texture the ink. */
@@ -11287,8 +11215,7 @@ body:not(.blog-theme)
     display: none;
   }
 
-  body:not(.blog-theme) .section-heading::before,
-  body:not(.blog-theme) .site-header::after {
+  body:not(.blog-theme) .section-heading::before {
     -webkit-mask: none;
     mask: none;
   }
