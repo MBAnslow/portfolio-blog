@@ -2,6 +2,7 @@ import { type CSSProperties, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { AiPhiFeature } from './components/AiPhiFeature'
 import { Arrow } from './components/Arrow'
+import { ProfileIcon } from './components/ProfileIcon'
 import { BelongingFeature } from './components/BelongingFeature'
 import { DebugBlendMenu } from './components/DebugBlendMenu'
 import { PracticeOverview } from './components/Capabilities'
@@ -47,7 +48,7 @@ type ProjectAccordionStyle = CSSProperties & {
 }
 
 const navigation = storySections.filter(({ id }) =>
-  ['about', 'projects', 'research'].includes(id),
+  ['about', 'projects', 'research', 'connect'].includes(id),
 )
 
 const blogPath = `${basePath}blog/`
@@ -365,8 +366,7 @@ function App() {
             </ul>
           </nav>
           <a className="header-link" href={blogPath}>
-            <span>Explore the</span>
-            <strong>Blog</strong>
+            Blog
             <Arrow />
           </a>
         </div>
@@ -680,12 +680,10 @@ function App() {
                 </p>
               </div>
               <ul className="connect-panel__links">
-                {profileLinks.map((link, index) => (
+                {profileLinks.map((link) => (
                   <li key={link.label}>
                     <a href={link.url} target="_blank" rel="noreferrer">
-                      <span className="connect-panel__index">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
+                      <ProfileIcon label={link.label} />
                       <span className="connect-panel__label">{link.label}</span>
                       <Arrow />
                     </a>
