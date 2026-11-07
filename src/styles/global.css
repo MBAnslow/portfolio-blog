@@ -652,6 +652,7 @@ main {
   .masthead__bar {
     grid-template-columns: minmax(0, 1fr);
     row-gap: 0.2rem;
+    padding-left: max(0px, calc(50% - 2.67 * var(--hero-title-size, 14vw)));
     white-space: normal;
   }
 
@@ -660,15 +661,16 @@ main {
   }
 
   .masthead__practice {
-    justify-self: center;
+    justify-self: start;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     row-gap: 0.15rem;
-    text-align: center;
+    text-align: left;
   }
 
   .masthead__place {
-    justify-self: end;
+    justify-self: start;
+    margin-top: 0.35rem;
   }
 }
 
