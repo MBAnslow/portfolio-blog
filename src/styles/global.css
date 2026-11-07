@@ -2858,14 +2858,38 @@ body:not(.blog-theme) .site-footer {
   }
 
   .essay-card,
+  .essay-card,
   .essay-card--featured {
-    min-height: 18rem;
+    min-height: 0;
+    column-gap: 1rem;
+    row-gap: 0.45rem;
+    padding: 1rem 1.1rem;
     grid-row: auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+  }
+
+  .essay-card > div {
+    padding-bottom: 0;
+  }
+
+  .essay-card svg {
+    width: 1.3rem;
+    align-self: center;
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
 
   .essay-card h3,
   .essay-card:not(.essay-card--featured) h3 {
-    font-size: 2rem;
+    max-width: none;
+    font-size: 1.45rem;
+    line-height: 1.06;
+  }
+
+  .essay-card p {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
   }
 
   .connect-section::before {
@@ -2877,12 +2901,32 @@ body:not(.blog-theme) .site-footer {
     display: none;
   }
 
+  .blog-gateway {
+    margin-bottom: 3rem;
+  }
+
   .blog-gateway__body {
-    padding-block: 4rem;
+    gap: 1.5rem;
+    padding-block: 2rem 2.25rem;
+  }
+
+  .blog-gateway__eyebrow {
+    margin-bottom: 1rem;
   }
 
   .blog-gateway h2 {
-    font-size: clamp(4.2rem, 22vw, 7rem);
+    font-size: clamp(2.8rem, 15vw, 4.5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.86;
+  }
+
+  .blog-gateway__copy p {
+    margin-bottom: 1.25rem;
+    font-size: 1.05rem;
+  }
+
+  .blog-gateway__copy a {
+    padding: 0.8rem 1rem;
   }
 
   .connect-section h2 {
